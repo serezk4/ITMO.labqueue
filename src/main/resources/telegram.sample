@@ -1,0 +1,8 @@
+### MAKE THIS FILE .properties ###
+
+telegram.bot.username=[bot_username]
+telegram.bot.token=[bot_token]
+
+services.anti_spam.duration=3 ### IN SECONDS ###
+
+telegram.bot.threads=4
