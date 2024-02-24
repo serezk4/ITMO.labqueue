@@ -133,6 +133,10 @@ public class StepSession {
         });
     }
 
+    public void rollback() {
+        input.add(trash.pop());
+    }
+
     /**
      * get next step
      *

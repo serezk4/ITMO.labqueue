@@ -19,14 +19,15 @@ public class Subject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String subjectName;
+    @Column(unique = true)
+    String name;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "flows_ids")
     List<Flow> flows;
 
-    public Subject(String subjectName, List<Flow> flows) {
-        this.subjectName = subjectName;
+    public Subject(String name, List<Flow> flows) {
+        this.name = name;
         this.flows = flows;
     }
 }
