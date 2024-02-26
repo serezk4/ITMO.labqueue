@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
  *
  * @version 1.0
  */
-@Entity @Table(name = "users")
+@Entity @Table(name = "tg_users")
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -63,8 +63,8 @@ public class TelegramUser {
     }
 
     @AllArgsConstructor
-    @Getter
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+    @Getter
     public enum Role {
         USER("user", 0), ADMIN_1("admin #1", 100);
 

@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity @Table(name = "practices")
 @NoArgsConstructor @AllArgsConstructor
@@ -17,9 +18,9 @@ public class Practice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
-    Teacher teacher;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "practice_ids", referencedColumnName = "id")
+    List<Teacher> teacher;
 
     @Basic
     LocalDate date;
