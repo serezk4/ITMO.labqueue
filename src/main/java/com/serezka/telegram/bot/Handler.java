@@ -47,28 +47,30 @@ public class Handler {
      * @param update - update from client
      */
     public void process(Bot bot, Update update) {
+        log.info("new update received: text: '{}' | chatId: {} | messageId: {} | type: {}", update.getText(), update.getChatId(), update.getMessageId(), update.getQueryType());
+
         if (!authorized.contains(update.getChatId()))
             checkAuth(update);
 
         // get user
-        final TelegramUser duser = getUser(bot, update);
-        if (duser == null) return;
+        final TelegramUser telegramUser = getUser(bot, update);
+        if (telegramUser == null) return;
 
-        update.setDatabaseUser(duser);
+        update.setDatabaseUser(telegramUser);
 
         // validate query
         if (!Settings.availableQueryTypes.contains(update.getQueryType())) {
             bot.send(SendMessage.builder()
-                    .chatId(update).text(localization.get("handler.query.type_error", duser))
+                    .chatId(update).text(localization.get("handler.query.type_error", telegramUser))
                     .build());
             return;
         }
 
         // check session
+
+        // todo menu session
         if (update.hasCallbackQuery()) {
             List<String> info = update.getCallbackQuery().getFormatted().info();
-
-            System.out.println(info);
         }
 
         if (StepSessionManager.containsSession(update.getChatId())) {
@@ -82,9 +84,9 @@ public class Handler {
                 .toList();
 
         if (filtered.isEmpty()) {
-            log.warn("Command not found | {} | {}", update.getText(), duser);
+            log.warn("Command not found | {} | {}", update.getText(), telegramUser);
             bot.send(SendMessage.builder()
-                    .chatId(update).text(localization.get("handler.command.not_found", duser))
+                    .chatId(update).text(localization.get("handler.command.not_found", telegramUser))
                     .build());
 
             return;
@@ -96,7 +98,7 @@ public class Handler {
         filtered.getFirst().execute(bot, update);
 
         // delete message summon message if needed
-        if (duser.isDeleteCommandSummonMessages()) {
+        if (telegramUser.isDeleteCommandSummonMessages()) {
             bot.executeAsync(DeleteMessage.builder()
                     .chatId(update.getChatId()).messageId(update.getMessageId())
                     .build());

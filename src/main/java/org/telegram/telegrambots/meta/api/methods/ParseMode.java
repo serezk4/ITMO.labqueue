@@ -1,5 +1,7 @@
 package org.telegram.telegrambots.meta.api.methods;
 
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+
 /**
  * @author Ruben Bermudez
  * @version 1.0

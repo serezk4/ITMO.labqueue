@@ -1,27 +1,24 @@
 package com.serezka.database.model.university;
 
-import com.serezka.database.model.telegram.TelegramUser;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Entity @Table(name = "students")
+import java.util.Calendar;
+
+@Entity @Table(name = "practices")
 @NoArgsConstructor @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @Data
-public class Student {
+public class Practice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(nullable = false)
-    String name;
-
-    @Column(name = "isu_id", unique = true, nullable = false)
-    Long isuId;
-
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "telegram_id", referencedColumnName = "id")
-    TelegramUser telegramUser;
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
+    Teacher teacher;
+
+    Calendar date;
 }

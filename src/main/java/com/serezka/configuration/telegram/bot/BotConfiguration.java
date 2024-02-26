@@ -1,6 +1,5 @@
 package com.serezka.configuration.telegram.bot;
 
-import com.serezka.database.service.telegram.MessageService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.bot.Handler;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +14,7 @@ public class BotConfiguration {
     public Bot bot(@Value("${telegram.bot.username}") String botUsername,
                    @Value("${telegram.bot.token}") String botToken,
                    @Value("${telegram.bot.threads}") int threadCount,
-                   MessageService messageService, Handler handler) {
-        return new Bot(botUsername, botToken, threadCount, messageService, handler);
+                   Handler handler) {
+        return new Bot(botUsername, botToken, threadCount, handler);
     }
 }

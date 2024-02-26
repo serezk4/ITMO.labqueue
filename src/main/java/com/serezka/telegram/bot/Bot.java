@@ -1,7 +1,5 @@
 package com.serezka.telegram.bot;
 
-import com.serezka.database.model.telegram.History;
-import com.serezka.database.service.telegram.MessageService;
 import com.serezka.localization.Localization;
 import com.serezka.telegram.session.menu.MenuSession;
 import com.serezka.telegram.session.menu.MenuSessionConfiguration;
@@ -35,16 +33,12 @@ import java.util.concurrent.ExecutionException;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Bot extends TelegramLongPollingBot {
-    /* bot data */ String botUsername, botToken;
-    /* handler */ Handler handler;
-    /* executor */ ExecutorServiceRouter executor;
+    /* bot data     */ String botUsername, botToken;
+    /* handler      */ Handler handler;
+    /* executor     */ ExecutorServiceRouter executor;
     /* localization */ Localization localization = Localization.getInstance();
 
-    // entities
-    MessageService messageService;
-
     public Bot(String botUsername, String botToken, int threadCount,
-               MessageService messageService,
                Handler handler) {
         super(botToken);
 
@@ -53,8 +47,6 @@ public class Bot extends TelegramLongPollingBot {
         this.handler = handler;
 
         this.executor = new ExecutorServiceRouter(threadCount);
-
-        this.messageService = messageService;
     }
 
 
@@ -76,7 +68,6 @@ public class Bot extends TelegramLongPollingBot {
             return;
         }
 
-        messageService.save(new History(update.getChatId(), update.getChatId(), update.getQueryType(), update.getText()));
         executor.route(update.getChatId(), () -> handler.process(this, update));
     }
 
@@ -126,6 +117,7 @@ public class Bot extends TelegramLongPollingBot {
         created.next(bot, update);
     }
 
+    // todo remove update field from here
     public void createStepSession(StepSessionConfiguration configuration, Update update) {
         StepSession created = new StepSession(configuration, this, update.getChatId());
         StepSessionManager.addSession(update.getChatId(), created);

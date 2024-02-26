@@ -17,7 +17,6 @@ import java.util.Locale;
  * Allows to get localized messages
  * @version 1.0
  */
-@Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Log4j2
 public class Localization {

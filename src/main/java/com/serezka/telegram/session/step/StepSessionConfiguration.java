@@ -1,5 +1,6 @@
 package com.serezka.telegram.session.step;
 
+import com.serezka.telegram.bot.Bot;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.function.Function;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter

@@ -75,7 +75,8 @@ public class StepSession {
     public void append(String text, ReplyKeyboard replyKeyboard) {
         if (botMessages.isEmpty() || botMessages.peekLast() == null) send(text, replyKeyboard, false);
 
-        botMessages.getLast().setText(botMessages.getLast().getText().replaceAll("\\.\\.\\.", "") + text);
+        botMessages.getLast().setText(botMessages.getLast().getText()
+                .replaceAll("\\.\\.\\.", "").replaceAll("`.+`", "") + text);
 
         send(botMessages.getLast().getText(), replyKeyboard, false);
     }
@@ -125,7 +126,8 @@ public class StepSession {
 
             if (response instanceof Message message) {
                 if (method instanceof SendMessage sendMessage) {
-                    message.setText(sendMessage.getText());
+                    message.setText(sendMessage.getText()
+                            .replaceAll("`\\s+`", ""));
                     botMessages.add(message);
                     return;
                 }
@@ -134,7 +136,8 @@ public class StepSession {
     }
 
     public void rollback() {
-        input.add(trash.pop());
+        input.addFirst(trash.pollLast());
+        data.removeLast();
     }
 
     /**

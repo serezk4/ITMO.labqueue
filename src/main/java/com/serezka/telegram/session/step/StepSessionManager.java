@@ -9,15 +9,15 @@ import java.util.Map;
 
 @Log4j2
 public class StepSessionManager {
-    private static final Map<Long, Deque<StepSession>> stepSession = new HashMap<>();
+    private static final Map<Long, Deque<StepSession>> stepSessions = new HashMap<>();
 
     public static boolean containsSession(long chatId) {
-        if (!stepSession.containsKey(chatId)) return false;
+        if (!stepSessions.containsKey(chatId)) return false;
 
         log.info("Checking session in chat " + chatId);
 
-        synchronized (stepSession.get(chatId)) {
-            return !stepSession.get(chatId).isEmpty();
+        synchronized (stepSessions.get(chatId)) {
+            return !stepSessions.get(chatId).isEmpty();
         }
     }
 
@@ -26,18 +26,18 @@ public class StepSessionManager {
 
         log.info("Getting session from chat " + chatId);
 
-        synchronized (stepSession.get(chatId)) {
-            return stepSession.get(chatId).peekLast();
+        synchronized (stepSessions.get(chatId)) {
+            return stepSessions.get(chatId).peekLast();
         }
     }
 
     public static void addSession(long chatId, StepSession stepSession) {
-        if (!containsSession(chatId)) StepSessionManager.stepSession.put(chatId, new LinkedList<>());
+        if (!containsSession(chatId)) stepSessions.put(chatId, new LinkedList<>());
 
         log.info("Adding session " + stepSession.getId() + " to chat " + chatId);
 
-        synchronized (StepSessionManager.stepSession.get(chatId)) {
-            StepSessionManager.stepSession.get(chatId).addLast(stepSession);
+        synchronized (stepSessions.get(chatId)) {
+            stepSessions.get(chatId).push(stepSession);
         }
     }
 
@@ -46,8 +46,8 @@ public class StepSessionManager {
 
         log.info("Removing session " + stepSession.getId() + " from chat " + chatId);
 
-        synchronized (StepSessionManager.stepSession.get(chatId)) {
-            StepSessionManager.stepSession.get(chatId).remove(stepSession);
+        synchronized (StepSessionManager.stepSessions.get(chatId)) {
+            StepSessionManager.stepSessions.get(chatId).remove(stepSession);
         }
     }
 
@@ -56,8 +56,8 @@ public class StepSessionManager {
 
         log.info("Removing session from chat " + chatId);
 
-        synchronized (stepSession.get(chatId)) {
-            stepSession.get(chatId).pollLast();
+        synchronized (stepSessions.get(chatId)) {
+            stepSessions.get(chatId).pollLast();
         }
     }
 }
