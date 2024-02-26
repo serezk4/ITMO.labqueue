@@ -4,13 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 @Entity @Table(name = "practices")
 @NoArgsConstructor @AllArgsConstructor
@@ -26,12 +21,9 @@ public class Practice {
     @JoinColumn(name = "teacher_id", referencedColumnName = "id")
     Teacher teacher;
 
-//    @Basic @Temporal(TemporalType.DATE) Date date;
-//    @Basic @Temporal(TemporalType.TIMESTAMP) Timestamp begin;
-
     @Basic
     LocalDate date;
 
-    @Basic
-    ZonedDateTime begin;
+    @Basic ZonedDateTime begin;
+    @Basic ZonedDateTime end;
 }
