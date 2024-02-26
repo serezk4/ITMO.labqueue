@@ -10,4 +10,7 @@ import java.util.List;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     boolean existsByTelegramUser(TelegramUser telegramUser);
+    Student findByIsuId(Long isuId);
+    List<Student> findAllByName(String name);
+
 }

@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.time.LocalDateTime;
+import java.util.TimeZone;
 
 @SpringBootApplication
 @RequiredArgsConstructor @Log4j2
@@ -27,7 +28,9 @@ public class Application implements ApplicationRunner {
     Bot bot;
 
     public static void main(String[] args) {
+
         SpringApplication.run(Application.class, args);
+
     }
 
     @Override

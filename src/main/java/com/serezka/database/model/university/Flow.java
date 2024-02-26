@@ -8,10 +8,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-@Entity
-@Table(name = "flows")
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity @Table(name = "flows")
+@NoArgsConstructor @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @Data

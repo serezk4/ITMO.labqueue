@@ -3,7 +3,6 @@ package com.serezka.telegram.command.list;
 import com.serezka.database.model.university.Flow;
 import com.serezka.database.service.university.FlowService;
 import com.serezka.database.service.university.StudentService;
-import com.serezka.database.service.university.SubjectService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.SystemCommand;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
@@ -17,14 +16,12 @@ import java.util.List;
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Register extends SystemCommand {
-    SubjectService subjectService;
     FlowService flowService;
     StudentService studentService;
 
-    public Register(SubjectService subjectService, FlowService flowService, StudentService studentService) {
+    public Register(FlowService flowService, StudentService studentService) {
         super(List.of("/register"), "зарегистрироваться в боте");
 
-        this.subjectService = subjectService;
         this.flowService = flowService;
         this.studentService = studentService;
     }
