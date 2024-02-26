@@ -15,9 +15,10 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Column(unique = true)
     String name;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "telegram_id", referencedColumnName = "id")
+    @JoinColumn(name = "telegram_id", referencedColumnName = "id", unique = true)
     TelegramUser telegramUser;
 }

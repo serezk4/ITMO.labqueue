@@ -25,5 +25,4 @@ public class Practice {
     LocalDate date;
 
     @Basic ZonedDateTime begin;
-    @Basic ZonedDateTime end;
 }
