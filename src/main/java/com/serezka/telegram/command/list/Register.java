@@ -1,6 +1,7 @@
 package com.serezka.telegram.command.list;
 
 import com.serezka.database.model.university.Flow;
+import com.serezka.database.model.university.Student;
 import com.serezka.database.service.university.FlowService;
 import com.serezka.database.service.university.StudentService;
 import com.serezka.telegram.bot.Bot;
@@ -16,68 +17,51 @@ import java.util.List;
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Register extends SystemCommand {
-    FlowService flowService;
     StudentService studentService;
 
-    public Register(FlowService flowService, StudentService studentService) {
-        super(List.of("/register"), "зарегистрироваться в боте");
+    public Register(StudentService studentService) {
+        super(List.of("/register"), "зарегистрироваться");
 
-        this.flowService = flowService;
         this.studentService = studentService;
     }
 
     @Override
     public void execute(Bot bot, Update update) {
-        var ref = new Object() {
-            Flow flow = null;
-        };
-
         bot.createStepSession(StepSessionConfiguration.create()
                 .saveUsersMessages(false)
-                .execute((session, request) -> session.send("*Введите данные:*\n*ФИО:* "))
-                .execute((session, request) -> session.append(request.getText() + "\n*ИСУ ID:* "))
-                .execute((session, request) -> session.append(request.getText() + "\n\n*Вы уверены в правильности данных?* (да/нет)"))
-                .execute((session, request) -> {
-                    if (!request.getText().equalsIgnoreCase("да")) {
-                        session.send("Регистрация отменена\n" + getUsage().getFirst() + " для повторной регистрации");
+                .execute((s, u) -> {
+                    if (studentService.existsByTelegramUser(u.getDatabaseUser())) {
+                        s.send("*Кажется, вы уже зарегистрированы в боте.*\nНапишите @serezkk для изменеия учетной записи.");
+                        s.destroy();
                         return;
                     }
 
+                    s.send("*Заполните данные:*\n*ФИО:* ");
+                })
+                .execute((s, u) -> s.append(u.getText() + "\n*ISU ID: *"))
+                .execute((s, u) -> {
+                    if (!u.getText().matches("\\d{6}")) {
+                        s.append("`неверный формат`");
+                        s.rollback();
+                        return;
+                    }
 
+                    s.append(u.getText() + "\n\n*Вы уверены в правильности данных? (да/нет)*");
+                })
+                .execute((s, u) -> {
+                    if (!u.getText().equalsIgnoreCase("да")) {
+                        s.send("*Регистрация отменена.*\n" + getUsage().getFirst() + " для повторной регистрации");
+                        return;
+                    }
 
+                    Student savedStudent = studentService.save(Student.builder()
+                            .name(s.getData().get(s.getData().size() - 3))
+                            .isuId(Long.parseLong(s.getData().get(s.getData().size() - 2)))
+                            .telegramUser(u.getDatabaseUser())
+                            .build());
+
+                    s.send(String.format("*Вы успешно зарегистрировались в боте!*%n%n*BOT ID:* %d%n*ISU ID:* %d%n*ФИО:* %s",
+                            savedStudent.getId(), savedStudent.getIsuId(), savedStudent.getName()));
                 }), update);
-
-//        bot.createStepSession(StepSessionConfiguration.create()
-//                .saveUsersMessages(false)
-//                .execute((session, request) -> session.send("*Введите данные:*\n*Группа:* "))
-//                .execute((session, request) -> {
-//                    ref.group = groupService.existsByName(request.getText()) ?
-//                            groupService.findByName(request.getText()) :
-//                            groupService.save(new Group(request.getText()));
-//
-//                    session.append(String.format("%s%n*Поток:* ", request.getText()));
-//                })
-//                .execute((session, request) -> {
-//                    if (!flowService.existsByName(request.getText())) {
-//                        session.append("`Такого потока не существует!`");
-//                        session.rollback();
-//                        return;
-//                    }
-//
-//                    ref.flow = flowService.findByName(request.getText());
-//                    session.append(request.getText() + "\n*ФИО:* ");
-//                })
-//                .execute((session, request) -> session.append(request.getText() + "\n\n*Вы уверены в правильности данных?* (да/нет)"))
-//                .execute((session, request) -> {
-//                    if (!request.getText().equalsIgnoreCase("да")) {
-//                        session.send("Регистрация отменена\n" + getUsage().getFirst() + " для повторной регистрации");
-//                        return;
-//                    }
-//
-//                    // todo
-//                    Student student = studentService.save(new Student(session.getData().get(session.getData().size() - 2),
-//                            update.getDatabaseUser(), ref.group, Collections.singletonList(ref.flow)));
-//                    session.send("*Данные успешно сохранены!*\n" + student.toString());
-//                }), update);
     }
 }

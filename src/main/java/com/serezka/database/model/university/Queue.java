@@ -21,7 +21,7 @@ public class Queue {
     Practice practice;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinColumn(name = "queue_item_ids", referencedColumnName = "id")
+    @JoinColumn(name = "queue_id", referencedColumnName = "id")
     List<QueueItem> items;
 
     @Builder.Default

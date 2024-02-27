@@ -149,14 +149,14 @@ public class StepSession {
     protected void getNext(Bot bot, Update update) {
         log.info("trying to get next step for session {}", id);
 
-        destroyIfEmpty(bot, update);
+        destroyIfEmpty();
 
         log.info("Session {} has steps, remain {} | next: {}", id, input.size(), input.peek());
 
         trash.add(input.pop());
         Objects.requireNonNull(trash.peekLast()).accept(this, update);
 
-        destroyIfEmpty(bot, update);
+        destroyIfEmpty();
     }
 
     protected void deleteMessages() {
@@ -190,21 +190,18 @@ public class StepSession {
 
     }
 
-    protected void destroyIfEmpty(Bot bot, Update update) {
+    protected void destroyIfEmpty() {
         if (!input.isEmpty()) return;
 
         log.info("Session {} has no input, it will be destroyed", id);
-        destroy(bot, update);
+        destroy();
     }
 
 
     /**
      * execute session
-     *
-     * @param bot    - bot
-     * @param update - update
      */
-    protected void destroy(Bot bot, Update update) {
+    public void destroy() {
         deleteMessages();
 
         // remove session from session manager

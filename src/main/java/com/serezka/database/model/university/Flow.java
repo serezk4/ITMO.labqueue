@@ -21,6 +21,6 @@ public class Flow {
     String name;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "student_ids", referencedColumnName = "id")
+    @JoinColumn(name = "practice_id", referencedColumnName = "id")
     List<Student> students;
 }

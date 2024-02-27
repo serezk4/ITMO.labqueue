@@ -21,7 +21,7 @@ public class Student {
     @Column(name = "isu_id", unique = true, nullable = false)
     Long isuId;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "telegram_id", referencedColumnName = "id")
     TelegramUser telegramUser;
 }

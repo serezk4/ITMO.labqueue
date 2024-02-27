@@ -22,7 +22,7 @@ public class Practice {
     Flow flow;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "teacher_ids", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "practice_id", referencedColumnName = "id", nullable = false)
     List<Teacher> teachers;
 
     @Basic ZonedDateTime begin;
