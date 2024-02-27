@@ -56,7 +56,7 @@ public class Handler {
         final TelegramUser telegramUser = getUser(bot, update);
         if (telegramUser == null) return;
 
-        update.setDatabaseUser(telegramUser);
+        update.setTelegramUser(telegramUser);
 
         // validate query
         if (!Settings.availableQueryTypes.contains(update.getQueryType())) {

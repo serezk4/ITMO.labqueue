@@ -1,8 +1,6 @@
 package com.serezka.telegram.command.list;
 
-import com.serezka.database.model.university.Flow;
 import com.serezka.database.model.university.Student;
-import com.serezka.database.service.university.FlowService;
 import com.serezka.database.service.university.StudentService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.SystemCommand;
@@ -30,7 +28,7 @@ public class Register extends SystemCommand {
         bot.createStepSession(StepSessionConfiguration.create()
                 .saveUsersMessages(false)
                 .execute((s, u) -> {
-                    if (studentService.existsByTelegramUser(u.getDatabaseUser())) {
+                    if (studentService.existsByTelegramUser(u.getTelegramUser())) {
                         s.send("*Кажется, вы уже зарегистрированы в боте.*\nНапишите @serezkk для изменеия учетной записи.");
                         s.destroy();
                         return;
@@ -46,7 +44,7 @@ public class Register extends SystemCommand {
                         return;
                     }
 
-                    s.append(u.getText() + "\n\n*Вы уверены в правильности данных? (да/нет)*");
+                    s.append(u.getText() + "\n\n*Вы уверены в правильности данных? (да/нет)*\n`После подтверждения изменить учетную запись с помощью команды будет невозможно!`");
                 })
                 .execute((s, u) -> {
                     if (!u.getText().equalsIgnoreCase("да")) {
@@ -57,7 +55,7 @@ public class Register extends SystemCommand {
                     Student savedStudent = studentService.save(Student.builder()
                             .name(s.getData().get(s.getData().size() - 3))
                             .isuId(Long.parseLong(s.getData().get(s.getData().size() - 2)))
-                            .telegramUser(u.getDatabaseUser())
+                            .telegramUser(u.getTelegramUser())
                             .build());
 
                     s.send(String.format("*Вы успешно зарегистрировались в боте!*%n%n*BOT ID:* %d%n*ISU ID:* %d%n*ФИО:* %s",

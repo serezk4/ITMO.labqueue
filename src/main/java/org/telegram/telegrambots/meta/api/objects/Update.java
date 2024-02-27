@@ -136,16 +136,16 @@ public class Update implements BotApiObject {
 
     // user stuff
     @JsonIgnore
-    TelegramUser databaseUser = null;
+    TelegramUser telegramUser = null;
 
-    public Update setDatabaseUser(TelegramUser databaseUser) {
-        this.databaseUser = databaseUser;
+    public Update setTelegramUser(TelegramUser telegramUser) {
+        this.telegramUser = telegramUser;
         return this;
     }
 
-    public TelegramUser getDatabaseUser() {
-        if (databaseUser == null) throw new NullPointerException("user can't be null!");
-        return databaseUser;
+    public TelegramUser getTelegramUser() {
+        if (telegramUser == null) throw new NullPointerException("user can't be null!");
+        return telegramUser;
     }
 
     // cache stuff
