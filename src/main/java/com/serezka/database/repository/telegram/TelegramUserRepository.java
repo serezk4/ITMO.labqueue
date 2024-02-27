@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<TelegramUser, Long> {
+public interface TelegramUserRepository extends JpaRepository<TelegramUser, Long> {
     long count();
     long countAllByRole(@NonNull TelegramUser.Role role);
 

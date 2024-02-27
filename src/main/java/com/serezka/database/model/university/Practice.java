@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -18,12 +17,13 @@ public class Practice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "practice_ids", referencedColumnName = "id")
-    List<Teacher> teacher;
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "flow_id", referencedColumnName = "id", nullable = false)
+    Flow flow;
 
-    @Basic
-    LocalDate date;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "teacher_ids", referencedColumnName = "id", nullable = false)
+    List<Teacher> teachers;
 
     @Basic ZonedDateTime begin;
 }

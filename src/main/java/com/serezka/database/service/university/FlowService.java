@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -17,6 +19,16 @@ public class FlowService {
     @Transactional
     public Flow save(Flow flow) {
         return flowRepository.save(flow);
+    }
+
+    @Transactional
+    public void removeById(Long id) {
+        flowRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Optional<Flow> findById(Long id) {
+        return flowRepository.findById(id);
     }
 
     @Transactional

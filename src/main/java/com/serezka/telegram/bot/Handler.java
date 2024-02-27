@@ -1,7 +1,7 @@
 package com.serezka.telegram.bot;
 
 import com.serezka.database.model.telegram.TelegramUser;
-import com.serezka.database.service.telegram.UserService;
+import com.serezka.database.service.telegram.TelegramUserService;
 import com.serezka.localization.Localization;
 import com.serezka.telegram.command.Command;
 import com.serezka.telegram.session.step.StepSessionManager;
@@ -32,7 +32,7 @@ public class Handler {
     List<Command> commands;
 
     // entities
-    UserService userService;
+    TelegramUserService telegamUserService;
 
     // localization
     Localization localization = Localization.getInstance();
@@ -113,7 +113,7 @@ public class Handler {
      * @return user from database
      */
     private TelegramUser getUser(Bot bot, Update update) {
-        Optional<TelegramUser> optionalUser = userService.findByChatId(update.getChatId());
+        Optional<TelegramUser> optionalUser = telegamUserService.findByChatId(update.getChatId());
 
         if (optionalUser.isEmpty()) {
             log.warn("User exception (can't find or create) | {} : {}", update.getUsername(), update.getChatId());
@@ -133,8 +133,8 @@ public class Handler {
      * @param update
      */
     private void checkAuth(Update update) {
-        if (!userService.existsByChatIdOrUsername(update.getChatId(), update.getUsername()))
-            userService.save(new TelegramUser(update.getChatId(), update.getUsername()));
+        if (!telegamUserService.existsByChatIdOrUsername(update.getChatId(), update.getUsername()))
+            telegamUserService.save(new TelegramUser(update.getChatId(), update.getUsername()));
     }
 
     /**

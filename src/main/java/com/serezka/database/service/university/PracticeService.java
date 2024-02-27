@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -25,12 +26,22 @@ public class PracticeService {
     }
 
     @Transactional
-    public List<Practice> findPracticesByDateAndTimeRange(LocalDate date, ZonedDateTime startTime, ZonedDateTime endTime) {
-        return practiceRepository.findPracticesByDateAndTimeRange(date, startTime, endTime);
+    public void removeById(Long id) {
+        practiceRepository.deleteById(id);
     }
 
     @Transactional
-    public List<Practice> findAllByTeacher(Teacher teacher) {
-        return practiceRepository.findAllByTeacher(teacher);
+    public Optional<Practice> findById(Long id) {
+        return practiceRepository.findById(id);
     }
+
+    @Transactional
+    public List<Practice> findPracticesByTimeRange(ZonedDateTime startTime, ZonedDateTime endTime) {
+        return practiceRepository.findPracticesByTimeRange(startTime, endTime);
+    }
+
+//    @Transactional todo
+//    public List<Practice> findAllByTeacher(Teacher teacher) {
+//        return practiceRepository.findAllByTeacher(teacher);
+//    }
 }

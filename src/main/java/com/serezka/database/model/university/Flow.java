@@ -20,13 +20,7 @@ public class Flow {
 
     String name;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "flow_ids", referencedColumnName = "id")
-    @Builder.Default
-    List<Practice> practices = Collections.emptyList();
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "flow_ids", referencedColumnName = "id")
-    @Builder.Default
-    List<Student> students = Collections.emptyList();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "student_ids", referencedColumnName = "id")
+    List<Student> students;
 }

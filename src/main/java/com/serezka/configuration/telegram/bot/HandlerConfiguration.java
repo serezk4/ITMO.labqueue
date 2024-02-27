@@ -1,6 +1,6 @@
 package com.serezka.configuration.telegram.bot;
 
-import com.serezka.database.service.telegram.UserService;
+import com.serezka.database.service.telegram.TelegramUserService;
 import com.serezka.telegram.bot.Handler;
 import com.serezka.telegram.command.Command;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,7 @@ import java.util.List;
 @PropertySource("classpath:telegram.properties")
 public class HandlerConfiguration {
     @Bean
-    public Handler handler(List<Command> commands, UserService userService) {
-        return new Handler(commands, userService);
+    public Handler handler(List<Command> commands, TelegramUserService telegamUserService) {
+        return new Handler(commands, telegamUserService);
     }
 }
