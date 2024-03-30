@@ -1,60 +1,35 @@
 package com.serezka.telegram.session.menu;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.Synchronized;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@Log4j2
 public class MenuSessionManager {
-    private static final Map<Long, List<MenuSession>> menuSessions = new HashMap<>();
+    private static final List<MenuSession> sessions = new ArrayList<>();
 
-    public static boolean containsSession(long chatId, long sessionId) {
-        if (!menuSessions.containsKey(chatId)) return false;
-
-        log.info("Checking session in chat " + chatId);
-
-        synchronized (menuSessions.get(chatId)) {
-            return menuSessions.get(chatId).stream().anyMatch(session -> session.getId() == sessionId);
-        }
+    @Synchronized
+    public static boolean containsSession(long chatId) {
+        return sessions.stream().anyMatch(session -> session.getChatId() == chatId);
     }
 
-    public static MenuSession getSession(long chatId, long sessionId) {
-        if (!containsSession(chatId, sessionId)) return null;
-
-        log.info("Getting session from chat " + chatId);
-
-        synchronized (menuSessions.get(chatId)) {
-            return menuSessions.get(chatId).stream().filter(session -> session.getId() == sessionId).findFirst().orElse(null);
-        }
+    @Synchronized
+    public static MenuSession getSession(long chatId) {
+        return sessions.stream().filter(session -> session.getChatId() == chatId).findFirst().orElse(null);
     }
 
-    public static void addSession(long chatId, MenuSession menuSession) {
-        if (!containsSession(chatId, menuSession.getId())) menuSessions.put(chatId, new ArrayList<>());
-
-        log.info("Adding session " + menuSession.getId() + " to chat " + chatId);
-
-        synchronized (menuSessions.get(chatId)) {
-            menuSessions.get(chatId).add(menuSession);
-        }
+    @Synchronized
+    public static void addSession(MenuSession session) {
+        sessions.add(session);
     }
 
-    public static void removeSession(long chatId, MenuSession menuSession) {
-        if (!containsSession(chatId, menuSession.getId())) return;
-
-        log.info("Removing session " + menuSession.getId() + " from chat " + chatId);
-
-        synchronized (menuSessions.get(chatId)) {
-            menuSessions.get(chatId).remove(menuSession);
-        }
+    @Synchronized
+    public static void removeSession(MenuSession session) {
+        sessions.remove(session);
     }
 
+    @Synchronized
     public static void removeSession(long chatId) {
-//        if (!containsSession(chatId)) return;
-
-        log.info("Removing session from chat " + chatId);
-
-        synchronized (menuSessions.get(chatId)) {
-            menuSessions.get(chatId).clear();
-        }
+        sessions.removeIf(session -> session.getChatId() == chatId);
     }
 }

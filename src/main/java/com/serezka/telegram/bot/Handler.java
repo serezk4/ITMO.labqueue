@@ -4,6 +4,7 @@ import com.serezka.database.model.telegram.TelegramUser;
 import com.serezka.database.service.telegram.TelegramUserService;
 import com.serezka.localization.Localization;
 import com.serezka.telegram.command.Command;
+import com.serezka.telegram.session.menu.MenuSessionManager;
 import com.serezka.telegram.session.step.StepSessionManager;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -67,10 +68,9 @@ public class Handler {
         }
 
         // check session
-
-        // todo menu session
-        if (update.hasCallbackQuery()) {
-            List<String> info = update.getCallbackQuery().getFormatted().info();
+        if (update.hasCallbackQuery() && MenuSessionManager.containsSession(update.getChatId())) {
+            MenuSessionManager.getSession(update.getChatId()).next(bot, update);
+            return;
         }
 
         if (StepSessionManager.containsSession(update.getChatId())) {

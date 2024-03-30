@@ -43,7 +43,7 @@ public class SuccessfulPayment implements BotApiObject {
     @JsonProperty(SHIPPING_OPTION_ID_FIELD)
     private String shippingOptionId; ///< Optional. Identifier of a chosen by user shipping option
     @JsonProperty(ORDER_INFO_FIELD)
-    private OrderInfo orderInfo; ///< Optional. Order info provided by the user
+    private OrderInfo orderInfo; ///< Optional. Order link provided by the user
     @JsonProperty(TELEGRAM_PAYMENT_CHARGE_ID_FIELD)
     private String telegramPaymentChargeId; ///< Telegram payment identifier
     @JsonProperty(PROVIDER_PAYMENT_CHARGE_ID_FIELD)

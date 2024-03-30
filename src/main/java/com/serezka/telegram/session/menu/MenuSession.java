@@ -1,129 +1,70 @@
 package com.serezka.telegram.session.menu;
 
 import com.serezka.telegram.bot.Bot;
+import com.serezka.telegram.session.Session;
 import com.serezka.telegram.util.keyboard.Keyboard;
 import com.serezka.telegram.util.keyboard.type.Inline;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.tuple.Triple;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Menu session
- *
- * @version 1.0
- */
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Log4j2
-public class MenuSession {
-    // configuration
-    MenuSessionConfiguration configuration;
+@Getter
+public class MenuSession implements Session {
+    private static long idCounter = 0;
+    private final long id = idCounter++;
 
-    // chat data
-    Bot bot;
-    long chatId;
+    private final long chatId;
+    private PageGenerator root;
+    private Map<String,PageGenerator> pages;
 
-    // runtime data
-    Deque<Message> botMessages = new ArrayDeque<>();
-    long id = Math.abs(UUID.randomUUID().toString().hashCode());
-
-    // cache
-    @NonFinal
-    Map<Long, Menu> cachedMenus;
-
-    public MenuSession(MenuSessionConfiguration configuration, Bot bot, long chatId) {
-        this.configuration = configuration;
-        this.bot = bot;
+    public MenuSession(long chatId, PageGenerator root, Map<String,PageGenerator> pages) {
         this.chatId = chatId;
+        this.root = root;
+        this.pages = pages;
     }
 
-    public void next(Bot bot, Update update) {
-        // init
-        if (botMessages.isEmpty()) {
-            Menu menu = configuration.getMenus().get(configuration.getInitLink());
-            PageResponse pageResponse = menu.apply(CallbackBundle.empty(),this);
-            pageResponse.mapButtons(id);
+    // {menuId};{pageId};{buttonId}
 
-            send(pageResponse.text(), Inline.getResizableKeyboard(pageResponse.buttons(), pageResponse.columns()));
+    @SneakyThrows
+    public void init(Bot bot, Update update) {
+        Page page = root.apply(this, CallbackBundle.empty());
+        page.getButtons().forEach(button -> button.getCallbackBundle().link().addFirst(String.valueOf(id)));
 
-            return;
-        }
-
-        if (!update.hasCallbackQuery()) {
-            log.warn("update has no callback query");
-            return;
-        }
-
-        final String callback = update.getCallbackQuery().getData();
-        final String[] args = callback.split("\\" + Keyboard.Delimiter.SERVICE, 2);
-
-        if (args.length < 2) {
-            log.warn("callback has no service delimiter, can't parse button ID");
-            return;
-        }
-
-        if (!args[0].matches("\\d+")) {
-            log.warn("callback has no valid button or session ID {}", Arrays.toString(args));
-            return;
-        }
-
-        Menu selected = configuration.getMenus().get(args[1]);
-        List<String> menuArgs = args.length > 2 ? Arrays.stream(args[2].split("\\" + Keyboard.Delimiter.DATA)).toList() : Collections.emptyList();
-
-    }
-
-    public void send(String text, ReplyKeyboard replyKeyboard) {
-        // todo make check reply keyboard
-        if (botMessages.peekLast() != null && botMessages.peekLast().getMessageId() != null) {
-            send(EditMessageText.builder()
-                    .chatId(botMessages.peekLast().getChatId()).messageId(botMessages.peekLast().getMessageId())
-                    .text(text)
-                    .build());
-
-            if (replyKeyboard instanceof InlineKeyboardMarkup inlineKeyboard) {
-                send(EditMessageReplyMarkup.builder()
-                        .chatId(chatId).messageId(botMessages.peekLast().getMessageId())
-                        .replyMarkup(inlineKeyboard)
-                        .build());
-            }
-
-            return;
-        }
-
-        send(SendMessage.builder()
-                .chatId(chatId)
-                .text(text).replyMarkup(replyKeyboard)
+        bot.execute(SendMessage.builder()
+                .chatId(update.getChatId())
+                .text(page.getText())
+                .replyMarkup(Inline.getResizableKeyboard(page.getButtons(), page.getRowSize()))
                 .build());
     }
 
-    public void send(BotApiMethod<?> method) {
-        bot.send(method).whenComplete((response, throwable) -> {
-            if (throwable != null) {
-                log.warn(throwable);
-                return;
-            }
+    public void next(Bot bot, Update update) {
+        if (!update.hasCallbackQuery()) return;
 
-            if (response instanceof Message message) {
-                if (method instanceof SendMessage sendMessage) {
-                    message.setText(sendMessage.getText());
-                    botMessages.add(message);
-                    return;
-                }
-            }
-        });
+        CallbackBundle callbackBundle = CallbackBundle.fromCallback(update.getCallbackQuery().getData());
+        if (callbackBundle.link().size() < 2) return;
+
+        PageGenerator pageGenerator = pages.getOrDefault(callbackBundle.link().getLast(), null);
+        if (pageGenerator == null) {
+            log.warn("Page with name {} not found", callbackBundle.link().getLast());
+            return;
+        }
+
+        Page page = pageGenerator.apply(this, callbackBundle);
+        page.getButtons().forEach(button -> button.getCallbackBundle().link().addFirst(String.valueOf(id)));
+
+        bot.executeAsync(EditMessageText.builder()
+                .chatId(update.getChatId()).messageId(update.getMessageId())
+                .text(page.getText())
+                .replyMarkup(Inline.getResizableKeyboard(page.getButtons(), page.getRowSize()))
+                .build());
     }
+
 }

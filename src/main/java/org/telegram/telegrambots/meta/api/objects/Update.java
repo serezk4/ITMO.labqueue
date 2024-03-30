@@ -287,7 +287,11 @@ public class Update implements BotApiObject {
 
         return cacheMessageId = switch (queryType) {
             case MESSAGE -> getMessage().getMessageId();
-            case CALLBACK_QUERY -> Integer.parseInt(getCallbackQuery().getInlineMessageId());
+            case CALLBACK_QUERY -> {
+                if (getCallbackQuery().getInlineMessageId() == null)
+                    yield ((Message) getCallbackQuery().getMessage()).getMessageId();
+                else yield Integer.parseInt(getCallbackQuery().getInlineMessageId());
+            }
             case CHOSEN_INLINE_QUERY -> Integer.parseInt(getChosenInlineQuery().getInlineMessageId());
             case EDITED_MESSAGE -> getEditedMessage().getMessageId();
             case CHANNEL_POST -> getChannelPost().getMessageId();

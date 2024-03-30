@@ -46,7 +46,7 @@ public class Inline {
 
     private static InlineKeyboardButton getButton(String text, CallbackBundle callbackBundle) {
         InlineKeyboardButton tempInlineButton = new InlineKeyboardButton(text);
-//        tempInlineButton.setCallbackData(id + Keyboard.Delimiter.SERVICE + callbackData);
+        tempInlineButton.setCallbackData(callbackBundle.toCallback());
 
         return tempInlineButton;
     }
@@ -56,7 +56,7 @@ public class Inline {
 //                getButton(button.getText(), button.getWebAppInfo(), button.getSessionId()) :
 //                getButton(button.getText(), String.join(Keyboard.Delimiter.SERVICE, button.getData()), button.getSessionId());
 
-        return getButton(button.getText(), new CallbackBundle(List.of("todo"), List.of("test")));
+        return getButton(button.getText(), button.getCallbackBundle());
     }
 
     private static InlineKeyboardButton getButton(String text, WebAppInfo webAppInfo, long id) {
@@ -69,8 +69,10 @@ public class Inline {
     @Getter @Setter
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @Builder @AllArgsConstructor
+    @ToString
     public static class Button {
-        private static long counter = 0;
+        private static long idCounter = 0;
+        private final long id = idCounter++;
         String text;
         CallbackBundle callbackBundle;
 

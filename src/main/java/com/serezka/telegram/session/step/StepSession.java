@@ -1,6 +1,7 @@
 package com.serezka.telegram.session.step;
 
 import com.serezka.telegram.bot.Bot;
+import com.serezka.telegram.session.Session;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -10,6 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -24,7 +26,7 @@ import java.util.*;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Log4j2
-public class StepSession {
+public class StepSession implements Session {
     StepSessionConfiguration configuration;
 
     Deque<Step> input;
@@ -36,10 +38,11 @@ public class StepSession {
     // session variables
     Deque<Message> botMessages = new ArrayDeque<>();
     Deque<Message> userMessages = new ArrayDeque<>();
+    Deque<CallbackQuery> userCallbacks = new ArrayDeque<>();
 
     List<String> data = new LinkedList<>();
 
-    long id = Math.abs(UUID.randomUUID().toString().hashCode()); // todo maybe fix
+    long id = Math.abs(UUID.fromString(UUID.randomUUID().toString()).getLeastSignificantBits());
 
     List<String> history = new LinkedList<>();
 
@@ -61,6 +64,8 @@ public class StepSession {
     public void next(Bot bot, Update update) {
         if (!update.hasCallbackQuery())
             userMessages.add(update.getMessage());
+        if (update.hasCallbackQuery())
+            userCallbacks.add(update.getCallbackQuery());
 
         data.add(update.getText());
 

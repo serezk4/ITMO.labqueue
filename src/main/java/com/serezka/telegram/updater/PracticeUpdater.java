@@ -13,10 +13,11 @@ import com.serezka.telegram.bot.Bot;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,8 @@ public class PracticeUpdater extends Updater {
         this.bot = bot;
     }
 
+    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
+    @Async
     @Override
     public void update() {
         try {
@@ -68,9 +71,6 @@ public class PracticeUpdater extends Updater {
         final Flow flow = practice.getFlow();
         final List<Teacher> teachers = practice.getTeachers();
 
-
-        System.out.println(flow);
-
         // check queue
         Optional<Queue> queue = queueService.findByPractice(practice);
 
@@ -82,5 +82,7 @@ public class PracticeUpdater extends Updater {
 
             return;
         }
+
+        // todo create menu
     }
 }

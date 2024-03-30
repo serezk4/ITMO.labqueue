@@ -36,7 +36,9 @@ public class Register extends SystemCommand {
 
                     s.send("*Заполните данные:*\n*ФИО:* ");
                 })
-                .execute((s, u) -> s.append(u.getText() + "\n*ISU ID: *"))
+                .execute((s, u) -> {
+                    s.append(u.getText() + "\n*ISU ID: *");
+                })
                 .execute((s, u) -> {
                     if (!u.getText().matches("\\d{6}")) {
                         s.append("`неверный формат`");

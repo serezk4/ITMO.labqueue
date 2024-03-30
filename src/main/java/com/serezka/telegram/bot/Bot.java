@@ -2,8 +2,9 @@ package com.serezka.telegram.bot;
 
 import com.serezka.localization.Localization;
 import com.serezka.telegram.session.menu.MenuSession;
-import com.serezka.telegram.session.menu.MenuSessionConfiguration;
 import com.serezka.telegram.session.menu.MenuSessionManager;
+import com.serezka.telegram.session.menu.Page;
+import com.serezka.telegram.session.menu.PageGenerator;
 import com.serezka.telegram.session.step.StepSession;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
 import com.serezka.telegram.session.step.StepSessionManager;
@@ -19,6 +20,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -111,10 +114,10 @@ public class Bot extends TelegramLongPollingBot {
         return executeAsync(method);
     }
 
-    public void createMenuSession(MenuSessionConfiguration configuration, Bot bot, Update update) {
-        MenuSession created = new MenuSession(configuration, bot, update.getChatId());
-        MenuSessionManager.addSession(update.getChatId(), created);
-        created.next(bot, update);
+    public void createMenuSession(PageGenerator root, Map<String, PageGenerator> pages, Update update) {
+        MenuSession menuSession = new MenuSession(update.getChatId(), root, pages);
+        MenuSessionManager.addSession(menuSession);
+        menuSession.init(this, update);
     }
 
     // todo remove update field from here
