@@ -18,7 +18,7 @@ public class Teacher {
     @Column(unique = true)
     String name;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "telegram_id", referencedColumnName = "id", unique = true)
     TelegramUser telegramUser;
 }

@@ -1,24 +1,21 @@
 package com.serezka.telegram.updater;
 
-import com.serezka.database.model.university.Flow;
-import com.serezka.database.model.university.Practice;
-import com.serezka.database.model.university.Queue;
-import com.serezka.database.model.university.Teacher;
+import com.serezka.database.model.university.*;
 import com.serezka.database.service.telegram.TelegramUserService;
-import com.serezka.database.service.university.FlowService;
-import com.serezka.database.service.university.PracticeService;
-import com.serezka.database.service.university.QueueService;
-import com.serezka.database.service.university.StudentService;
+import com.serezka.database.service.university.*;
 import com.serezka.telegram.bot.Bot;
+import com.serezka.telegram.session.menu.Page;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -31,10 +28,11 @@ public class PracticeUpdater extends Updater {
     QueueService queueService;
     StudentService studentService;
     FlowService flowService;
+    QueueItemService queueItemService;
 
     Bot bot;
 
-    public PracticeUpdater(PracticeService practiceService, TelegramUserService telegramUserService, QueueService queueService, StudentService studentService, FlowService flowService,
+    public PracticeUpdater(PracticeService practiceService, TelegramUserService telegramUserService, QueueService queueService, StudentService studentService, FlowService flowService, QueueItemService queueItemService,
                            Bot bot) {
         super(0, 1, TimeUnit.MINUTES);
 
@@ -43,11 +41,10 @@ public class PracticeUpdater extends Updater {
         this.queueService = queueService;
         this.studentService = studentService;
         this.flowService = flowService;
+        this.queueItemService = queueItemService;
         this.bot = bot;
     }
 
-    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
-    @Async
     @Override
     public void update() {
         try {
@@ -61,6 +58,7 @@ public class PracticeUpdater extends Updater {
             practices.forEach(this::handlePractice);
         } catch (Exception ex) {
             log.warn(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -71,18 +69,39 @@ public class PracticeUpdater extends Updater {
         final Flow flow = practice.getFlow();
         final List<Teacher> teachers = practice.getTeachers();
 
-        // check queue
-        Optional<Queue> queue = queueService.findByPractice(practice);
+        // check optionalQueue
+        Optional<Queue> optionalQueue = queueService.findByPractice(practice);
+        Queue queue;
 
-        if (queue.isEmpty()) {
-            queueService.save(Queue.builder()
-                    .practice(practice)
-                    .state(Queue.State.REGISTRATION_OPEN)
-                    .build());
+        queue = optionalQueue.orElseGet(() -> queueService.save(Queue.builder()
+                .practice(practice)
+                .state(Queue.State.REGISTRATION_OPEN)
+                .build()));
 
-            return;
-        }
+        // send info to students
+        flow.getStudents().forEach(student -> {
+            StringBuilder text = new StringBuilder();
+            text.append("Привет! Началась запись на практику *").append(flow.getName()).append("*\n");
+            teachers.forEach(teacher -> text.append("*").append(teacher.getName()).append("*\n"));
+            text.append("Начало практики: ").append(practice.getBegin()).append("\n");
 
-        // todo create menu
+
+            bot.createMenuSession(
+                    (session, callback) -> new Page(text.toString())
+                            .addButtonWithLink("Записаться", "register"),
+                    Map.of("register", (session, callback) -> {
+                        QueueItem queueItem = queueItemService.save(QueueItem.builder()
+                                .student(student)
+                                .build());
+
+                        queue.getItems().add(queueItem);
+                        queueService.save(queue);
+
+                        return new Page("Вы успешно записались на практику!");
+                    }),
+                    student.getTelegramUser().getChatId()
+            );
+        });
+
     }
 }

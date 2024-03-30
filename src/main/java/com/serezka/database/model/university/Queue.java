@@ -20,7 +20,7 @@ public class Queue {
     @JoinColumn(name = "practice_id", referencedColumnName = "id", unique = true)
     Practice practice;
 
-    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "queue_id", referencedColumnName = "id")
     List<QueueItem> items;
 

@@ -40,7 +40,7 @@ public class Page {
     }
 
     public Page addButtonWithLink(String text, String link) {
-        addButton(text, text, link);
+        addButton(text, "", link);
         return this;
     }
 

@@ -114,10 +114,10 @@ public class Bot extends TelegramLongPollingBot {
         return executeAsync(method);
     }
 
-    public void createMenuSession(PageGenerator root, Map<String, PageGenerator> pages, Update update) {
-        MenuSession menuSession = new MenuSession(update.getChatId(), root, pages);
+    public void createMenuSession(PageGenerator root, Map<String, PageGenerator> pages, long chatId) {
+        MenuSession menuSession = new MenuSession(chatId, root, pages);
         MenuSessionManager.addSession(menuSession);
-        menuSession.init(this, update);
+        menuSession.init(this, chatId);
     }
 
     // todo remove update field from here

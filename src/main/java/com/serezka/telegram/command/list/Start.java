@@ -26,6 +26,6 @@ public class Start extends Command {
 //                .build());
 
         bot.createMenuSession((session, callback) -> new Page("test").addButtonWithLink("test", "test"),
-                Map.of("test", (session, callback) -> new Page("test").addButton("qwe")), update);
+                Map.of("test", (session, callback) -> new Page("test").addButton("qwe")), update.getChatId());
     }
 }

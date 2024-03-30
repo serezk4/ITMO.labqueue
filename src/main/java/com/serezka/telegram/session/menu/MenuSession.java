@@ -34,12 +34,12 @@ public class MenuSession implements Session {
     // {menuId};{pageId};{buttonId}
 
     @SneakyThrows
-    public void init(Bot bot, Update update) {
+    public void init(Bot bot, long chatId) {
         Page page = root.apply(this, CallbackBundle.empty());
         page.getButtons().forEach(button -> button.getCallbackBundle().link().addFirst(String.valueOf(id)));
 
         bot.execute(SendMessage.builder()
-                .chatId(update.getChatId())
+                .chatId(chatId)
                 .text(page.getText())
                 .replyMarkup(Inline.getResizableKeyboard(page.getButtons(), page.getRowSize()))
                 .build());
