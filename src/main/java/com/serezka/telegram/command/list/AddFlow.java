@@ -7,16 +7,20 @@ import com.serezka.database.service.university.StudentService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.SystemCommand;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
+import com.serezka.telegram.util.keyboard.Keyboard;
+import com.serezka.telegram.util.keyboard.type.Inline;
+import com.serezka.telegram.util.keyboard.type.Reply;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AddFlow extends SystemCommand {
     FlowService flowService;
     StudentService studentService;
@@ -32,12 +36,21 @@ public class AddFlow extends SystemCommand {
     public void execute(Bot bot, Update update) {
         bot.createStepSession(StepSessionConfiguration.create()
                 .saveUsersMessages(false)
-                .execute((s,u) -> {
-                    s.send("*Введите название потока:* ...");
+                .saveBotsMessages(false)
+                .execute((s, u) -> {
+                    s.send("*Введите название потока:* ...",
+                            Reply.getResizableKeyboard(List.of(new Reply.Button("Отмена")), 2));
                 })
                 .execute((s, u) -> {
+                    if (u.getText().equals("Отмена")) {
+                        s.send("*Вы отменили добавление потока*", true);
+                        s.destroy();
+                        return;
+                    }
+
                     if (!flowService.existsByName(u.getText())) {
-                        s.append(String.format("`потока %s не существует!`", u.getText()));
+                        s.append(String.format("`потока %s не существует!`", u.getText()),
+                                Reply.getResizableKeyboard(List.of(new Reply.Button("Отмена")), 2));
                         s.rollback();
                         return;
                     }

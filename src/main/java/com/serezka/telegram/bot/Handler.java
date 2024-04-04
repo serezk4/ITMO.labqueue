@@ -79,6 +79,14 @@ public class Handler {
         }
 
         // get command
+        if (update.getText().equalsIgnoreCase("/help")) {
+            bot.send(SendMessage.builder()
+                    .text(getHelp(telegramUser))
+                    .chatId(update)
+                    .build());
+            return;
+        }
+
         List<Command> filtered = commands.stream()
                 .filter(command -> command.getUsage().contains(update.getText()))
                 .toList();
@@ -134,7 +142,10 @@ public class Handler {
      */
     private void checkAuth(Update update) {
         if (!telegamUserService.existsByChatIdOrUsername(update.getChatId(), update.getUsername()))
-            telegamUserService.save(new TelegramUser(update.getChatId(), update.getUsername()));
+            telegamUserService.save(TelegramUser.builder()
+                    .chatId(update.getChatId())
+                    .username(update.getUsername())
+                    .build());
     }
 
     /**

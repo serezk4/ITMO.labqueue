@@ -94,6 +94,10 @@ public class StepSession implements Session {
         send(text, false);
     }
 
+    public void send(String text, ReplyKeyboard replyKeyboard) {
+        send(text, replyKeyboard, false);
+    }
+
     public void send(String text, boolean likeNew) {
         send(text, null, likeNew);
     }
@@ -185,7 +189,7 @@ public class StepSession implements Session {
         if (configuration.isSaveBotsMessages()) return;
         if (botMessages.isEmpty()) return;
 
-        while (botMessages.size() > 1) {
+        while (!botMessages.isEmpty()) {
             Message temp = botMessages.pollFirst();
 
             bot.executeAsync(DeleteMessage.builder()

@@ -40,8 +40,8 @@ public class PracticeService {
         return practiceRepository.findPracticesByTimeRange(startTime, endTime);
     }
 
-//    @Transactional todo
-//    public List<Practice> findAllByTeacher(Teacher teacher) {
-//        return practiceRepository.findAllByTeacher(teacher);
-//    }
+    @Transactional
+    public List<Practice> findAllByTeacher(Teacher teacher) {
+        return practiceRepository.findAllByTeachersContaining(teacher);
+    }
 }

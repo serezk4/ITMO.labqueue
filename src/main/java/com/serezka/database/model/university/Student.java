@@ -26,8 +26,7 @@ public class Student {
     @Column(name = "isu_id", unique = true, nullable = false)
     Long isuId;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "telegram_id", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @ToString.Exclude
     TelegramUser telegramUser;
 

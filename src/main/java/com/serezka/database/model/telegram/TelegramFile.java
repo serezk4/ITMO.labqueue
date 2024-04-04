@@ -1,10 +1,10 @@
 package com.serezka.database.model.telegram;
 
+import com.serezka.database.model.university.Practice;
 import com.serezka.database.model.university.Student;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "files")
@@ -12,8 +12,7 @@ import org.hibernate.annotations.Type;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-@Getter
-@Setter
+@Getter @Setter
 @ToString
 public class TelegramFile {
     @Id
@@ -26,6 +25,8 @@ public class TelegramFile {
     String name;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinColumn(name = "student_id")
     Student student;
+
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    Practice practice;
 }

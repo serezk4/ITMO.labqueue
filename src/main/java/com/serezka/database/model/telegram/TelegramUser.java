@@ -47,34 +47,16 @@ public class TelegramUser {
     @Column(name = "delete_command_summon_messages")
     boolean deleteCommandSummonMessages = true;
 
-    public TelegramUser(@NonNull Long chatId, @NonNull String username) {
-        this.chatId = chatId;
-        this.username = username;
-    }
-
-    public TelegramUser(@NonNull Long chatId, @NonNull String username, @NonNull Role role) {
-        this.chatId = chatId;
-        this.username = username;
-        this.role = role;
-    }
-
-    public TelegramUser(@NonNull Long chatId, @NonNull String username, @NonNull Role role, @NonNull Localization.Type localization) {
-        this.chatId = chatId;
-        this.username = username;
-        this.role = role;
-        this.localization = localization;
-    }
-
     @AllArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     @Getter
     public enum Role {
-        USER("user", 0), ADMIN_1("admin #1", 100);
+        USER("user", 0), ADMIN1("admin #1", 100), TEACHER("teacher", 10);
 
         String name;
         int adminLvl;
 
-        public static final Role MAX = Role.ADMIN_1;
+        public static final Role MAX = Role.ADMIN1;
         public static final Role MIN = Role.USER;
     }
 
