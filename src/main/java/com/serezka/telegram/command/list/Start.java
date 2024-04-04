@@ -21,6 +21,9 @@ public class Start extends Command {
 
     @Override
     public void execute(Bot bot, Update update) {
+
+
+        
 //        bot.send(SendMessage.builder()
 //                .chatId(update).text("Привет! Это бот для записи в очередь для практики ОПД 1.9.\nИспользуй /register для добавления в бота")
 //                .build());

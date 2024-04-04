@@ -15,12 +15,10 @@ import java.util.Objects;
  * @version 1.0
  */
 @Entity @Table(name = "tg_users")
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-@Getter
-@Setter
+@Getter @Setter
 @ToString
 public class TelegramUser {
     @Id

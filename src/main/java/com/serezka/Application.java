@@ -35,17 +35,6 @@ public class Application implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        practiceService.save(Practice.builder()
-//                .date(LocalDate.now())
-//                .begin(ZonedDateTime.of(LocalDateTime.of(2024, Month.FEBRUARY, 26, 23, 55), defaultTimeZone))
-//                .build());
-//
-//        System.out.println(practiceService.findPracticesByDateAndTimeRange(
-//                LocalDate.now(),
-//                ZonedDateTime.now(),
-//                ZonedDateTime.of(LocalDateTime.of(2024, Month.FEBRUARY, 26, 23, 57), defaultTimeZone)
-//        ));
-
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(bot);
     }

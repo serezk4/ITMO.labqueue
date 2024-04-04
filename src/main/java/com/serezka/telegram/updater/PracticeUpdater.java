@@ -8,10 +8,7 @@ import com.serezka.telegram.session.menu.Page;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -79,29 +76,29 @@ public class PracticeUpdater extends Updater {
                 .build()));
 
         // send info to students
-        flow.getStudents().forEach(student -> {
-            StringBuilder text = new StringBuilder();
-            text.append("Привет! Началась запись на практику *").append(flow.getName()).append("*\n");
-            teachers.forEach(teacher -> text.append("*").append(teacher.getName()).append("*\n"));
-            text.append("Начало практики: ").append(practice.getBegin()).append("\n");
+        flow.getStudents()
+                .forEach(student -> {
+                    StringBuilder text = new StringBuilder();
+                    text.append("Привет! Началась запись на практику *").append(flow.getName()).append("*\n");
+                    teachers.forEach(teacher -> text.append("*").append(teacher.getName()).append("*\n"));
+                    text.append("Начало практики: ").append(practice.getBegin()).append("\n");
 
+                    bot.createMenuSession(
+                            (session, callback) -> new Page(text.toString())
+                                    .addButtonWithLink("Записаться", "register"),
+                            Map.of("register", (session, callback) -> {
+                                QueueItem queueItem = queueItemService.save(QueueItem.builder()
+                                        .student(student)
+                                        .build());
 
-            bot.createMenuSession(
-                    (session, callback) -> new Page(text.toString())
-                            .addButtonWithLink("Записаться", "register"),
-                    Map.of("register", (session, callback) -> {
-                        QueueItem queueItem = queueItemService.save(QueueItem.builder()
-                                .student(student)
-                                .build());
+                                queue.getItems().add(queueItem);
+                                queueService.save(queue);
 
-                        queue.getItems().add(queueItem);
-                        queueService.save(queue);
-
-                        return new Page("Вы успешно записались на практику!");
-                    }),
-                    student.getTelegramUser().getChatId()
-            );
-        });
+                                return new Page("Вы успешно записались на практику!");
+                            }),
+                            student.getTelegramUser().getChatId()
+                    );
+                });
 
     }
 }

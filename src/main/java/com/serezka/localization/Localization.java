@@ -8,7 +8,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 

@@ -2,7 +2,6 @@ package com.serezka.telegram.session.menu;
 
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.session.Session;
-import com.serezka.telegram.util.keyboard.Keyboard;
 import com.serezka.telegram.util.keyboard.type.Inline;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -12,7 +11,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -52,6 +50,7 @@ public class MenuSession implements Session {
         if (callbackBundle.link().size() < 2) return;
 
         PageGenerator pageGenerator = pages.getOrDefault(callbackBundle.link().getLast(), null);
+        if (callbackBundle.link().getLast().equals("root")) pageGenerator = root;
         if (pageGenerator == null) {
             log.warn("Page with name {} not found", callbackBundle.link().getLast());
             return;
