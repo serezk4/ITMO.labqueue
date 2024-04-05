@@ -88,7 +88,8 @@ public class Handler {
         }
 
         List<Command> filtered = commands.stream()
-                .filter(command -> command.getUsage().contains(update.getText()))
+                /* usage    */.filter(command -> command.getUsage().contains(update.getText()))
+                /* adminlvl */.filter(command -> command.getRequiredRole().getAdminLvl() <= telegramUser.getRole().getAdminLvl())
                 .toList();
 
         if (filtered.isEmpty()) {

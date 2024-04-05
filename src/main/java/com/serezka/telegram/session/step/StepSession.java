@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -38,7 +39,7 @@ public class StepSession implements Session {
     // session variables
     Deque<Message> botMessages = new ArrayDeque<>();
     Deque<Message> userMessages = new ArrayDeque<>();
-    Deque<CallbackQuery> userCallbacks = new ArrayDeque<>();
+    List<CallbackBundle> userCallbacks = new ArrayList<>();
 
     List<String> data = new LinkedList<>();
 
@@ -65,7 +66,7 @@ public class StepSession implements Session {
         if (!update.hasCallbackQuery())
             userMessages.add(update.getMessage());
         if (update.hasCallbackQuery())
-            userCallbacks.add(update.getCallbackQuery());
+            userCallbacks.add(CallbackBundle.fromCallback(update.getCallbackQuery().getData()));
 
         data.add(update.getText());
 

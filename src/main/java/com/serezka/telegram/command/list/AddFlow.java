@@ -26,7 +26,7 @@ public class AddFlow extends SystemCommand {
     StudentService studentService;
 
     public AddFlow(FlowService flowService, StudentService studentService) {
-        super(List.of("/addflow"), "добавить поток");
+        super(List.of("/addflow", "Добавить поток"), "добавить поток");
 
         this.flowService = flowService;
         this.studentService = studentService;
@@ -35,11 +35,10 @@ public class AddFlow extends SystemCommand {
     @Override
     public void execute(Bot bot, Update update) {
         bot.createStepSession(StepSessionConfiguration.create()
-                .saveUsersMessages(false)
-                .saveBotsMessages(false)
+                .saveUsersMessages(false).saveBotsMessages(true)
                 .execute((s, u) -> {
-                    s.send("*Введите название потока:* ...",
-                            Reply.getResizableKeyboard(List.of(new Reply.Button("Отмена")), 2));
+                    s.send("*Введите название потока:* ..."/*,
+                            Reply.getResizableKeyboard(List.of(new Reply.Button("Отмена")), 2)*/);
                 })
                 .execute((s, u) -> {
                     if (u.getText().equals("Отмена")) {
@@ -49,8 +48,8 @@ public class AddFlow extends SystemCommand {
                     }
 
                     if (!flowService.existsByName(u.getText())) {
-                        s.append(String.format("`потока %s не существует!`", u.getText()),
-                                Reply.getResizableKeyboard(List.of(new Reply.Button("Отмена")), 2));
+                        s.append(String.format("`потока %s не существует!`", u.getText())/*,
+                                Reply.getResizableKeyboard(List.of(new Reply.Button("Отмена")), 2)*/);
                         s.rollback();
                         return;
                     }

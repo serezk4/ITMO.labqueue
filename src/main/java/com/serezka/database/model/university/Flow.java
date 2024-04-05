@@ -20,6 +20,7 @@ public class Flow {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
+    @Column(unique = true)
     String name;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})

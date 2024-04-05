@@ -11,6 +11,8 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -21,9 +23,10 @@ public class MenuSession implements Session {
 
     private final long chatId;
     private PageGenerator root;
-    private Map<String,PageGenerator> pages;
+    private Map<String, PageGenerator> pages;
+    private final List<CallbackBundle> callbackHistory = new ArrayList<>();
 
-    public MenuSession(long chatId, PageGenerator root, Map<String,PageGenerator> pages) {
+    public MenuSession(long chatId, PageGenerator root, Map<String, PageGenerator> pages) {
         this.chatId = chatId;
         this.root = root;
         this.pages = pages;
@@ -47,7 +50,16 @@ public class MenuSession implements Session {
         if (!update.hasCallbackQuery()) return;
 
         CallbackBundle callbackBundle = CallbackBundle.fromCallback(update.getCallbackQuery().getData());
+        callbackHistory.add(callbackBundle);
         if (callbackBundle.link().size() < 2) return;
+        if (callbackBundle.link().getLast().equals("close")) {
+            MenuSessionManager.removeSession(this);
+            bot.send(EditMessageText.builder()
+                    .chatId(update.getChatId()).messageId(update.getMessageId())
+                    .text("Закрыто")
+                    .build());
+            return;
+        }
 
         PageGenerator pageGenerator = pages.getOrDefault(callbackBundle.link().getLast(), null);
         if (callbackBundle.link().getLast().equals("root")) pageGenerator = root;

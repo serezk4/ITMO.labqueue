@@ -87,15 +87,20 @@ public class PracticeUpdater extends Updater {
                             (session, callback) -> new Page(text.toString())
                                     .addButtonWithLink("Записаться", "register"),
                             Map.of("register", (session, callback) -> {
-                                QueueItem queueItem = queueItemService.save(QueueItem.builder()
-                                        .student(student)
-                                        .build());
+//                                QueueItem queueItem = queueItemService.save(QueueItem.builder()
+//                                        .student(student)
+//                                        .build());
+//
+//                                queue.getItems().add(queueItem);
+//                                queueService.save(queue);
 
-                                queue.getItems().add(queueItem);
-                                queueService.save(queue);
-
-                                return new Page("Вы успешно записались на практику!");
-                            }),
+                                        return new Page("Вы успешно записались на практику!")
+                                                .addButtonWithLink("Прикрепить отчет", "attach");
+                                    },
+                                    "attach", (session, callback) -> {
+                                        return new Page("Прикрепите отчет")
+                                                .addButtonWithLink("Отправить", "send");
+                                    }),
                             student.getTelegramUser().getChatId()
                     );
                 });

@@ -17,7 +17,8 @@ public class Reply {
 
     private static ReplyKeyboardMarkup getDefault() {
         return getCustomKeyboard(new String[][]{
-                {"todo"},
+                {"Зарегистрироваться", "Профиль"},
+                {"Добавить поток"},
                 {"todo"}
         });
     }
@@ -46,7 +47,7 @@ public class Reply {
 
     public static ReplyKeyboardMarkup getResizableKeyboard(List<Button> buttons, int rowSize) {
         List<KeyboardRow> mainRow = new ArrayList<>();
-        Queue<Button> buttonsQueue = new PriorityQueue<>(buttons);
+        Queue<Button> buttonsQueue = new ArrayDeque<>(buttons);
 
         while (!buttonsQueue.isEmpty()) {
             mainRow.add(new KeyboardRow(

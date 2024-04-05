@@ -27,7 +27,7 @@ public class MyProfile extends Command {
     PracticeService practiceService;
 
     public MyProfile(StudentService studentService, TeacherService teacherService, PracticeService practiceService) {
-        super(List.of("/me"), "посмотреть профиль", TelegramUser.Role.MIN);
+        super(List.of("/me", "Профиль"), "посмотреть профиль", TelegramUser.Role.MIN);
 
         this.studentService = studentService;
         this.teacherService = teacherService;

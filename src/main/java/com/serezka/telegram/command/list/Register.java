@@ -18,7 +18,7 @@ public class Register extends SystemCommand {
     StudentService studentService;
 
     public Register(StudentService studentService) {
-        super(List.of("/register"), "зарегистрироваться");
+        super(List.of("/register", "Зарегистрироваться"), "зарегистрироваться");
 
         this.studentService = studentService;
     }

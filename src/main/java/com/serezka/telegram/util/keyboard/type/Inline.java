@@ -30,7 +30,7 @@ public class Inline {
 
     public static InlineKeyboardMarkup getResizableKeyboard(List<? extends Button> buttonsData, int rowSize) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        Queue<Button> buttonsQueue = new PriorityQueue<>(buttonsData);
+        Queue<Button> buttonsQueue = new ArrayDeque<>(buttonsData);
 
         while (!buttonsQueue.isEmpty())
             rows.add(

@@ -1,5 +1,6 @@
 package com.serezka.database.model.telegram;
 
+import com.serezka.database.model.university.Flow;
 import com.serezka.database.model.university.Practice;
 import com.serezka.database.model.university.Student;
 import jakarta.persistence.*;
@@ -28,5 +29,5 @@ public class TelegramFile {
     Student student;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    Practice practice;
+    Flow flow;
 }
