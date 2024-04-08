@@ -74,8 +74,19 @@ public class Bot extends TelegramLongPollingBot {
         executor.route(update.getChatId(), () -> handler.process(this, update));
     }
 
+    @Deprecated
     public <T extends Serializable, Method extends BotApiMethod<T>> CompletableFuture<T> send(Method method) {
         return executeAsync(method);
+    }
+
+    @Override
+    public <T extends Serializable, Method extends BotApiMethod<T>> T execute(Method method) {
+        try {
+            return super.execute(method);
+        } catch (TelegramApiException e) {
+            log.warn("Error method execution: {}", e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -120,7 +131,6 @@ public class Bot extends TelegramLongPollingBot {
         menuSession.init(this, chatId);
     }
 
-    // todo remove update field from here
     public void createStepSession(StepSessionConfiguration configuration, Update update) {
         StepSession created = new StepSession(configuration, this, update.getChatId());
         StepSessionManager.addSession(update.getChatId(), created);

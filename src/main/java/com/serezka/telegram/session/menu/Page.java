@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
@@ -42,6 +43,11 @@ public class Page {
     public Page addButtonWithLink(String text, String link) {
         addButton(text, "", link);
         return this;
+    }
+
+    public Page addButtonWithAction(String text, String action) {
+        addButton(text, action, "this");
+        return this; // todo
     }
 
     public Page addButton(String text, String data, String link) {

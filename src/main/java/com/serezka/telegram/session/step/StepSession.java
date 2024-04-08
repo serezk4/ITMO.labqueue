@@ -12,13 +12,13 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * StepSession class for step-by-step interaction with user
@@ -35,6 +35,8 @@ public class StepSession implements Session {
 
     Bot bot;
     long chatId;
+
+    final Map<String, Object> storage = new HashMap<>();
 
     // session variables
     Deque<Message> botMessages = new ArrayDeque<>();
@@ -79,12 +81,16 @@ public class StepSession implements Session {
 
     // execute methods
     public void append(String text, ReplyKeyboard replyKeyboard) {
-        if (botMessages.isEmpty() || botMessages.peekLast() == null) send(text, replyKeyboard, false);
+        try {
+            if (botMessages.isEmpty() || botMessages.peekLast() == null) send(text, replyKeyboard, false);
 
-        botMessages.getLast().setText(botMessages.getLast().getText()
-                .replaceAll("\\.\\.\\.", "").replaceAll("`.+`", "") + text);
+            botMessages.getLast().setText(botMessages.getLast().getText()
+                    .replaceAll("\\.\\.\\.", "").replaceAll("`.+`", "") + text);
 
-        send(botMessages.getLast().getText(), replyKeyboard, false);
+            send(botMessages.getLast().getText(), replyKeyboard, false);
+        } catch (Exception ex) {
+            send(text, replyKeyboard, false);
+        }
     }
 
     public void append(String text) {
@@ -104,21 +110,26 @@ public class StepSession implements Session {
     }
 
     public void send(String text, ReplyKeyboard replyKeyboard, boolean likeNew) {
-        // todo make check reply keyboard
         if (!likeNew && configuration.isCanEditMessages() && botMessages.peekLast() != null && botMessages.peekLast().getMessageId() != null) {
-            send(EditMessageText.builder()
-                    .chatId(botMessages.peekLast().getChatId()).messageId(botMessages.peekLast().getMessageId())
-                    .text(text)
-                    .build());
+            try {
+                send(EditMessageText.builder()
+                        .chatId(botMessages.peekLast().getChatId()).messageId(botMessages.peekLast().getMessageId())
+                        .text(text)
+                        .build());
 
-            if (replyKeyboard instanceof InlineKeyboardMarkup inlineKeyboard) {
-                send(EditMessageReplyMarkup.builder()
-                        .chatId(chatId).messageId(botMessages.peekLast().getMessageId())
-                        .replyMarkup(inlineKeyboard)
+                if (replyKeyboard instanceof InlineKeyboardMarkup inlineKeyboard) {
+                    send(EditMessageReplyMarkup.builder()
+                            .chatId(chatId).messageId(botMessages.peekLast().getMessageId())
+                            .replyMarkup(inlineKeyboard)
+                            .build());
+                }
+
+                return;
+            } catch (Exception ex) {
+                bot.executeAsync(DeleteMessage.builder()
+                        .chatId(botMessages.peekLast().getChatId()).messageId(botMessages.peekLast().getMessageId())
                         .build());
             }
-
-            return;
         }
 
         send(SendMessage.builder()

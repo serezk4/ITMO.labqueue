@@ -25,7 +25,7 @@ public class Practice {
     Flow flow;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    List<Teacher> teachers;
+    List<Person> teachers;
 
     @Basic ZonedDateTime begin;
 

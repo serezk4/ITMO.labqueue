@@ -1,7 +1,7 @@
 package com.serezka.database.repository.university;
 
+import com.serezka.database.model.university.Person;
 import com.serezka.database.model.university.Practice;
-import com.serezka.database.model.university.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,5 +16,5 @@ public interface PracticeRepository extends JpaRepository<Practice, Long> {
     List<Practice> findPracticesByTimeRange(@Param("startTime") ZonedDateTime startTime,
                                             @Param("endTime") ZonedDateTime endTime);
 
-    List<Practice> findAllByTeachersContaining(Teacher teacher);
+    List<Practice> findAllByTeachersContaining(Person teacher);
 }

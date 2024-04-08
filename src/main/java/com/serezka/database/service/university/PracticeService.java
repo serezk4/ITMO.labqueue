@@ -1,7 +1,7 @@
 package com.serezka.database.service.university;
 
+import com.serezka.database.model.university.Person;
 import com.serezka.database.model.university.Practice;
-import com.serezka.database.model.university.Teacher;
 import com.serezka.database.repository.university.PracticeRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +40,7 @@ public class PracticeService {
     }
 
     @Transactional
-    public List<Practice> findAllByTeacher(Teacher teacher) {
+    public List<Practice> findAllByTeacher(Person teacher) {
         return practiceRepository.findAllByTeachersContaining(teacher);
     }
 }

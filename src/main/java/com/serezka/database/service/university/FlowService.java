@@ -1,7 +1,7 @@
 package com.serezka.database.service.university;
 
 import com.serezka.database.model.university.Flow;
-import com.serezka.database.model.university.Student;
+import com.serezka.database.model.university.Person;
 import com.serezka.database.repository.university.FlowRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -44,7 +44,7 @@ public class FlowService {
     }
 
     @Transactional
-    public List<Flow> findAllByStudentsContaining(Student student) {
-        return flowRepository.findAllByStudentsContaining(student);
+    public List<Flow> findAllByStudentsContaining(Person person) {
+        return flowRepository.findAllByPeopleContaining(person);
     }
 }

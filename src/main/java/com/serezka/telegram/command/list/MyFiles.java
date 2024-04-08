@@ -2,7 +2,7 @@ package com.serezka.telegram.command.list;
 
 import com.serezka.database.model.telegram.TelegramFile;
 import com.serezka.database.model.telegram.TelegramUser;
-import com.serezka.database.model.university.Student;
+import com.serezka.database.model.university.Person;
 import com.serezka.database.service.telegram.TelegramFileService;
 import com.serezka.database.service.university.StudentService;
 import com.serezka.telegram.bot.Bot;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
@@ -43,7 +42,7 @@ public class MyFiles extends Command {
 
     @Override
     public void execute(Bot bot, Update update) {
-        Optional<Student> optionalStudent = studentService.findByTelegramUser(update.getTelegramUser());
+        Optional<Person> optionalStudent = studentService.findByTelegramUser(update.getTelegramUser());
         if (optionalStudent.isEmpty()) {
             bot.send(SendMessage.builder()
                     .text("Вы не зарегистрированы в системе")

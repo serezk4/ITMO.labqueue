@@ -1,12 +1,9 @@
 package com.serezka.telegram.command.list;
 
 import com.serezka.database.model.telegram.TelegramUser;
-import com.serezka.database.model.university.Student;
-import com.serezka.database.model.university.Teacher;
-import com.serezka.database.service.university.FlowService;
+import com.serezka.database.model.university.Person;
 import com.serezka.database.service.university.PracticeService;
 import com.serezka.database.service.university.StudentService;
-import com.serezka.database.service.university.TeacherService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.Command;
 import lombok.AccessLevel;
@@ -23,14 +20,12 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MyProfile extends Command {
     StudentService studentService;
-    TeacherService teacherService;
     PracticeService practiceService;
 
-    public MyProfile(StudentService studentService, TeacherService teacherService, PracticeService practiceService) {
+    public MyProfile(StudentService studentService,  PracticeService practiceService) {
         super(List.of("/me", "Профиль"), "посмотреть профиль", TelegramUser.Role.MIN);
 
         this.studentService = studentService;
-        this.teacherService = teacherService;
         this.practiceService = practiceService;
     }
 
@@ -38,8 +33,8 @@ public class MyProfile extends Command {
     public void execute(Bot bot, Update update) {
         TelegramUser user = update.getTelegramUser();
 
-        Optional<Student> student = studentService.findByTelegramUser(user);
-        Optional<Teacher> teacher = teacherService.findByTelegramUser(user);
+//        Optional<Person> person = studentService.findByTelegramUser(user);
+//        Optional<Teacher> teacher = teacherService.findByTelegramUser(user);
 
         StringBuilder text = new StringBuilder(String.format("""
                 telegram:
@@ -48,19 +43,19 @@ public class MyProfile extends Command {
                                 
                 """, user.getUsername(), user.getRole()));
 
-        student.ifPresent(value -> text.append(String.format("""
-                student:
-                > <b>ФИО</b>: %s
-                > <b>ISU ID</b>: %s
-                                
-                """, value.getName(), value.getIsuId())));
-
-        teacher.ifPresent(value -> text.append(String.format("""
-                teacher:
-                > <b>ФИО</b>: %s
-                > <b>кол-во практик</b>: %d
-                                
-                """, value.getName(), practiceService.findAllByTeacher(value).size())));
+//        person.ifPresent(value -> text.append(String.format("""
+//                person:
+//                > <b>ФИО</b>: %s
+//                > <b>ISU ID</b>: %s
+//
+//                """, value.getName(), value.getIsuId())));
+//
+//        teacher.ifPresent(value -> text.append(String.format("""
+//                teacher:
+//                > <b>ФИО</b>: %s
+//                > <b>кол-во практик</b>: %d
+//
+//                """, value.getName(), practiceService.findAllByTeacher(value).size())));
 
 
         bot.send(SendMessage.builder()

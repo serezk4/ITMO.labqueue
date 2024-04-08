@@ -1,8 +1,7 @@
 package com.serezka.database.model.telegram;
 
 import com.serezka.database.model.university.Flow;
-import com.serezka.database.model.university.Practice;
-import com.serezka.database.model.university.Student;
+import com.serezka.database.model.university.Person;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +25,7 @@ public class TelegramFile {
     String name;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    Student student;
+    Person person;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     Flow flow;

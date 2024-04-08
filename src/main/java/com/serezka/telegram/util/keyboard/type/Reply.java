@@ -17,9 +17,7 @@ public class Reply {
 
     private static ReplyKeyboardMarkup getDefault() {
         return getCustomKeyboard(new String[][]{
-                {"Зарегистрироваться", "Профиль"},
                 {"Добавить поток"},
-                {"todo"}
         });
     }
 

@@ -1,19 +1,15 @@
 package com.serezka.telegram.command.list;
 
 import com.serezka.database.model.university.Flow;
-import com.serezka.database.model.university.Student;
+import com.serezka.database.model.university.Person;
 import com.serezka.database.service.university.FlowService;
 import com.serezka.database.service.university.StudentService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.SystemCommand;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
-import com.serezka.telegram.util.keyboard.Keyboard;
-import com.serezka.telegram.util.keyboard.type.Inline;
-import com.serezka.telegram.util.keyboard.type.Reply;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
@@ -54,7 +50,7 @@ public class AddFlow extends SystemCommand {
                         return;
                     }
 
-                    Optional<Student> student = studentService.findByTelegramUser(u.getTelegramUser());
+                    Optional<Person> student = studentService.findByTelegramUser(u.getTelegramUser());
 
                     if (student.isEmpty()) {
                         s.send("*Кажется, вы еще не зарегистрировались в боте.*\n/register - для регистрации\n`Если вы регистрировались, то напишите @serezkk`");
@@ -64,13 +60,13 @@ public class AddFlow extends SystemCommand {
 
                     Flow selectedFlow = flowService.findByName(u.getText());
 
-                    if (selectedFlow.getStudents().stream().anyMatch(temp -> temp.getId().compareTo(student.get().getId()) == 0)) {
+                    if (selectedFlow.getPeople().stream().anyMatch(temp -> temp.getId().compareTo(student.get().getId()) == 0)) {
                         s.send("*Вы уже состоите в потоке* " + selectedFlow.getName());
                         s.destroy();
                         return;
                     }
 
-                    selectedFlow.getStudents().add(student.get());
+                    selectedFlow.getPeople().add(student.get());
                     flowService.save(selectedFlow);
 
                     s.send(String.format("*Вы успешно добавили поток* %s%n/myflows - все ваши потоки", selectedFlow.getName()));

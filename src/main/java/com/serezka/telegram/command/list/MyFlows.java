@@ -6,21 +6,17 @@ import com.serezka.database.service.university.FlowService;
 import com.serezka.database.service.university.StudentService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.Command;
-import com.serezka.telegram.session.menu.MenuSession;
 import com.serezka.telegram.session.menu.Page;
 import com.serezka.telegram.session.menu.PageGenerator;
-import com.serezka.telegram.util.keyboard.type.Inline;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -51,7 +47,7 @@ public class MyFlows extends Command {
         flows.forEach(flow -> {
             flowsPage.put(flow.getName(), (menuSession, callbackBundle) -> {
                 if (callbackBundle.data().contains("delete")) {
-                    flow.getStudents().remove(studentService.findByTelegramUser(update.getTelegramUser()).get());
+                    flow.getPeople().remove(studentService.findByTelegramUser(update.getTelegramUser()).get());
                     flowService.save(flow);
 
                     return new Page("Поток " + flow.getName() + " удален")

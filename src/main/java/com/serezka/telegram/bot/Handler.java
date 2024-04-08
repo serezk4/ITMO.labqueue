@@ -61,7 +61,7 @@ public class Handler {
 
         // validate query
         if (!Settings.availableQueryTypes.contains(update.getQueryType())) {
-            bot.send(SendMessage.builder()
+            bot.execute(SendMessage.builder()
                     .chatId(update).text(localization.get("handler.query.type_error", telegramUser))
                     .build());
             return;
@@ -80,7 +80,7 @@ public class Handler {
 
         // get command
         if (update.getText().equalsIgnoreCase("/help")) {
-            bot.send(SendMessage.builder()
+            bot.execute(SendMessage.builder()
                     .text(getHelp(telegramUser))
                     .chatId(update)
                     .build());
@@ -94,7 +94,7 @@ public class Handler {
 
         if (filtered.isEmpty()) {
             log.warn("Command not found | {} | {}", update.getText(), telegramUser);
-            bot.send(SendMessage.builder()
+            bot.execute(SendMessage.builder()
                     .chatId(update).text(localization.get("handler.command.not_found", telegramUser))
                     .build());
 

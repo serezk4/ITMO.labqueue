@@ -1,7 +1,7 @@
 package com.serezka.database.service.university;
 
 import com.serezka.database.model.telegram.TelegramUser;
-import com.serezka.database.model.university.Student;
+import com.serezka.database.model.university.Person;
 import com.serezka.database.repository.university.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -19,8 +19,8 @@ public class StudentService {
     StudentRepository studentRepository;
 
     @Transactional
-    public Student save(Student student) {
-        return studentRepository.save(student);
+    public Person save(Person person) {
+        return studentRepository.save(person);
     }
 
     @Transactional
@@ -29,22 +29,22 @@ public class StudentService {
     }
 
     @Transactional
-    public Optional<Student> findById(Long id) {
+    public Optional<Person> findById(Long id) {
         return studentRepository.findById(id);
     }
 
     @Transactional
-    public Optional<Student> findByTelegramUser(TelegramUser telegramUser) {
+    public Optional<Person> findByTelegramUser(TelegramUser telegramUser) {
         return studentRepository.findByTelegramUser(telegramUser);
     }
 
     @Transactional
-    public List<Student> findAllByName(String name) {
+    public List<Person> findAllByName(String name) {
         return studentRepository.findAllByName(name);
     }
 
     @Transactional
-    public Optional<Student> findByIsuId(Long isuId) {
+    public Optional<Person> findByIsuId(Long isuId) {
         return studentRepository.findByIsuId(isuId);
     }
 

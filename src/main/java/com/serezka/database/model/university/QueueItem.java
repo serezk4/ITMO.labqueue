@@ -21,7 +21,7 @@ public class QueueItem {
     Long id;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    Student student;
+    Person person;
 
     @Builder.Default
     @Column(name = "number_of_approaches", nullable = false)

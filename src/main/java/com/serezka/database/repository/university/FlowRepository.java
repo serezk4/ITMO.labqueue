@@ -1,8 +1,7 @@
 package com.serezka.database.repository.university;
 
 import com.serezka.database.model.university.Flow;
-import com.serezka.database.model.university.Practice;
-import com.serezka.database.model.university.Student;
+import com.serezka.database.model.university.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +13,5 @@ public interface FlowRepository extends JpaRepository<Flow, Long> {
 
     Flow findByName(String name);
 
-    List<Flow> findAllByStudentsContaining(Student student);
+    List<Flow> findAllByPeopleContaining(Person person);
 }

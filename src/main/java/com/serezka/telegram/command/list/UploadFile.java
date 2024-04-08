@@ -10,20 +10,16 @@ import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.Command;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
 import com.serezka.telegram.util.keyboard.type.Inline;
-import com.serezka.telegram.util.keyboard.type.Reply;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
@@ -82,7 +78,7 @@ public class UploadFile extends Command {
                                         .name(downloaded.getName())
                                         .content(Files.readAllBytes(downloaded.toPath()))
                                         .flow(selectedFlow.get())
-                                        .student(studentService.findByTelegramUser(u.getTelegramUser()).orElseThrow(() -> new RuntimeException("Student not found")))
+                                        .person(studentService.findByTelegramUser(u.getTelegramUser()).orElseThrow(() -> new RuntimeException("Student not found")))
                                         .build());
 
                                 s.send("\n*Файл успешно загружен!*\n*Файл:* `" + telegramFile.getId() + telegramFile.getName() + "`\n*Поток:* " + selectedFlow.get().getName() + "\n\n/myfiles - все ваши файлы");

@@ -54,7 +54,7 @@ public class MenuSession implements Session {
         if (callbackBundle.link().size() < 2) return;
         if (callbackBundle.link().getLast().equals("close")) {
             MenuSessionManager.removeSession(this);
-            bot.send(EditMessageText.builder()
+            bot.execute(EditMessageText.builder()
                     .chatId(update.getChatId()).messageId(update.getMessageId())
                     .text("Закрыто")
                     .build());
@@ -71,7 +71,7 @@ public class MenuSession implements Session {
         Page page = pageGenerator.apply(this, callbackBundle);
         page.getButtons().forEach(button -> button.getCallbackBundle().link().addFirst(String.valueOf(id)));
 
-        bot.executeAsync(EditMessageText.builder()
+        bot.execute(EditMessageText.builder()
                 .chatId(update.getChatId()).messageId(update.getMessageId())
                 .text(page.getText())
                 .replyMarkup(Inline.getResizableKeyboard(page.getButtons(), page.getRowSize()))

@@ -24,7 +24,7 @@ public class Flow {
     String name;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    List<Student> students;
+    List<Person> people;
 
     @Override
     public final boolean equals(Object o) {

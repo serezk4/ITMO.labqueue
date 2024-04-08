@@ -190,6 +190,7 @@ public class Update implements BotApiObject {
         final Message message = getMessage();
 
         List<Update.Flag> flags = new ArrayList<>();
+
         if (message.hasText()) flags.add(Update.Flag.TEXT);
         if (message.hasEntities()) flags.add(Update.Flag.ENTITIES);
         if (message.getCaptionEntities() != null) flags.add(Update.Flag.CAPTION_ENTITIES); // TODO
@@ -235,10 +236,8 @@ public class Update implements BotApiObject {
         if (message.getSenderChat() != null) flags.add(Update.Flag.SENDER_CHAT);
         if (message.getProximityAlertTriggered() != null) flags.add(Update.Flag.PROXIMITY_ALERT_TRIGGERED);
         if (message.getMessageAutoDeleteTimerChanged() != null) flags.add(Update.Flag.MESSAGE_AUTO_DELETE_TIMER_CHANGED);
-        if (message.getIsAutomaticForward() != null && message.getIsAutomaticForward())
-            flags.add(Update.Flag.IS_AUTOMATIC_FORWARD);
-        if (message.getHasProtectedContent() != null && message.getHasProtectedContent())
-            flags.add(Update.Flag.HAS_PROTECTED_CONTENT);
+        if (message.getIsAutomaticForward() != null && message.getIsAutomaticForward()) flags.add(Update.Flag.IS_AUTOMATIC_FORWARD);
+        if (message.getHasProtectedContent() != null && message.getHasProtectedContent()) flags.add(Update.Flag.HAS_PROTECTED_CONTENT);
         if (message.getWebAppData() != null) flags.add(Update.Flag.WEB_APP_DATA);
         if (message.getVideoChatStarted() != null) flags.add(Update.Flag.VIDEO_CHAT_STARTED);
         if (message.getVideoChatEnded() != null) flags.add(Update.Flag.VIDEO_CHAT_ENDED);

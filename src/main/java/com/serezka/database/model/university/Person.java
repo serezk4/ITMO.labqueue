@@ -8,14 +8,14 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
-@Entity @Table(name = "students")
+@Entity @Table(name = "persons")
 @NoArgsConstructor @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @Getter
 @Setter
 @ToString
-public class Student {
+public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -30,6 +30,20 @@ public class Student {
     @ToString.Exclude
     TelegramUser telegramUser;
 
+    @Column(nullable = false)
+    @Builder.Default
+    Role role = Role.STUDENT;
+
+    @Getter
+    @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+    @RequiredArgsConstructor
+    public enum Role {
+        STUDENT("студент", 10), TEACHER("преподаватель", 1000), ADMIN("администратор", 10000);
+
+        String name;
+        int lvl;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
@@ -37,8 +51,8 @@ public class Student {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Student student = (Student) o;
-        return getId() != null && Objects.equals(getId(), student.getId());
+        Person person = (Person) o;
+        return getId() != null && Objects.equals(getId(), person.getId());
     }
 
     @Override
