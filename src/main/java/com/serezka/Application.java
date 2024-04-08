@@ -27,8 +27,6 @@ public class Application implements ApplicationRunner {
     // bot
     Bot bot;
 
-    PracticeService practiceService;
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

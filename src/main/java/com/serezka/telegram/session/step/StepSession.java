@@ -161,6 +161,12 @@ public class StepSession implements Session {
         data.removeLast();
     }
 
+    public void rollback(int nTimes) {
+        for (int i = 0; i < nTimes; i++) {
+            rollback();
+        }
+    }
+
     /**
      * get next step
      *
@@ -201,7 +207,7 @@ public class StepSession implements Session {
         if (configuration.isSaveBotsMessages()) return;
         if (botMessages.isEmpty()) return;
 
-        while (!botMessages.isEmpty()) {
+        while (botMessages.size() > 1) {
             Message temp = botMessages.pollFirst();
 
             bot.executeAsync(DeleteMessage.builder()

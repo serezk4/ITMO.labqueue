@@ -5,17 +5,11 @@ import com.serezka.database.model.university.Person;
 import com.serezka.database.service.university.StudentService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.Command;
-import com.serezka.telegram.session.menu.MenuSession;
-import com.serezka.telegram.session.menu.Page;
-import com.serezka.telegram.session.menu.PageGenerator;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
-import com.serezka.telegram.session.step.StepSessionManager;
 import com.serezka.telegram.util.keyboard.type.Inline;
 import com.serezka.telegram.util.keyboard.type.Reply;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import okhttp3.Call;
-import org.glassfish.grizzly.http.server.SessionManager;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
@@ -23,15 +17,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Start extends Command {
+public class Register extends Command {
     StudentService studentService;
 
-    public Start(StudentService studentService) {
-        super(List.of("/start", "Зарегистрироваться"), "load bot", TelegramUser.Role.MIN);
+    public Register(StudentService studentService) {
+        super(List.of("/register", "/start", "Зарегистрироваться"), "load bot", TelegramUser.Role.MIN);
         this.studentService = studentService;
     }
 

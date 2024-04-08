@@ -44,6 +44,11 @@ public class FlowService {
     }
 
     @Transactional
+    public Optional<Flow> findByNameAndSecret(String name, String secret) {
+        return flowRepository.findByNameAndSecret(name, secret);
+    }
+
+    @Transactional
     public List<Flow> findAllByStudentsContaining(Person person) {
         return flowRepository.findAllByPeopleContaining(person);
     }

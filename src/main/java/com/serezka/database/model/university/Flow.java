@@ -23,6 +23,8 @@ public class Flow {
     @Column(unique = true)
     String name;
 
+    String secret;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     List<Person> people;
 

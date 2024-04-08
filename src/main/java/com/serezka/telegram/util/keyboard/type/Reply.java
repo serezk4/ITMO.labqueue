@@ -1,5 +1,6 @@
 package com.serezka.telegram.util.keyboard.type;
 
+import com.serezka.database.model.university.Person;
 import com.serezka.telegram.util.keyboard.Keyboard;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,6 +20,15 @@ public class Reply {
         return getCustomKeyboard(new String[][]{
                 {"Добавить поток"},
         });
+    }
+
+    public static ReplyKeyboardMarkup getDefault(Person.Role role) {
+        return switch (role) {
+            case ADMIN -> getCustomKeyboard(new String[][]{{"admin_panel"}});
+            case STUDENT -> getCustomKeyboard(new String[][]{{"Добавить поток", "Мои потоки"}});
+            case TEACHER -> getCustomKeyboard(new String[][]{{"Создать поток"}});
+            case null, default -> getCustomKeyboard(new String[][]{{"Регистрация"}});
+        };
     }
 
     public static ReplyKeyboardMarkup getCustomKeyboard(List<List<String>> buttonsText) {
