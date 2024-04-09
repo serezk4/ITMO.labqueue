@@ -3,7 +3,7 @@ package com.serezka.telegram.command.list;
 import com.serezka.database.model.telegram.TelegramUser;
 import com.serezka.database.model.university.Flow;
 import com.serezka.database.service.university.FlowService;
-import com.serezka.database.service.university.StudentService;
+import com.serezka.database.service.university.PersonService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.Command;
 import com.serezka.telegram.session.menu.Page;
@@ -22,32 +22,32 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MyFlows extends Command {
     FlowService flowService;
-    StudentService studentService;
+    PersonService personService;
 
-    public MyFlows(FlowService flowService, StudentService studentService) {
+    public MyFlows(FlowService flowService, PersonService personService) {
         super(List.of("/myflows"), "подписанные потоки", TelegramUser.Role.MIN);
 
         this.flowService = flowService;
-        this.studentService = studentService;
+        this.personService = personService;
     }
 
     @Override
     public void execute(Bot bot, Update update) {
-        if (!studentService.existsByTelegramUser(update.getTelegramUser())) {
-            bot.send(SendMessage.builder()
+        if (!personService.existsByTelegramUser(update.getTelegramUser())) {
+            bot.execute(SendMessage.builder()
                     .text("Вы не зарегистрированы в системе")
                     .chatId(update)
                     .build());
             return;
         }
 
-        List<Flow> flows = flowService.findAllByStudentsContaining(studentService.findByTelegramUser(update.getTelegramUser()).get());
+        List<Flow> flows = flowService.findAllByStudentsContaining(personService.findByTelegramUser(update.getTelegramUser()).get());
 
         Map<String, PageGenerator> flowsPage = new HashMap<>();
         flows.forEach(flow -> {
             flowsPage.put(flow.getName(), (menuSession, callbackBundle) -> {
                 if (callbackBundle.data().contains("delete")) {
-                    flow.getPeople().remove(studentService.findByTelegramUser(update.getTelegramUser()).get());
+                    flow.getPeople().remove(personService.findByTelegramUser(update.getTelegramUser()).get());
                     flowService.save(flow);
 
                     return new Page("Поток " + flow.getName() + " удален")

@@ -2,7 +2,7 @@ package com.serezka.telegram.command.list;
 
 import com.serezka.database.model.telegram.TelegramUser;
 import com.serezka.database.model.university.Person;
-import com.serezka.database.service.university.StudentService;
+import com.serezka.database.service.university.PersonService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.Command;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
@@ -21,16 +21,16 @@ import java.util.List;
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Register extends Command {
-    StudentService studentService;
+    PersonService personService;
 
-    public Register(StudentService studentService) {
+    public Register(PersonService personService) {
         super(List.of("/register", "/start", "Зарегистрироваться"), "load bot", TelegramUser.Role.MIN);
-        this.studentService = studentService;
+        this.personService = personService;
     }
 
     @Override
     public void execute(Bot bot, Update update) {
-        if (studentService.findByTelegramUser(update.getTelegramUser()).isPresent()) {
+        if (personService.findByTelegramUser(update.getTelegramUser()).isPresent()) {
             bot.execute(SendMessage.builder()
                     .chatId(update.getChatId()).text("*Вы уже зарегистрированы!*")
                     .build());
@@ -91,32 +91,13 @@ public class Register extends Command {
                             }
 
                             s.getStorage().put("isuId", u.getMessage().getText());
-                            s.append(" " + u.getMessage().getText() + "\n\n*Вы точно уверены в введенных данных?*\n`При последующих изменениях учетной записи вас автоматически отпишет от всех потоков.`",
+                            s.append(" " + u.getMessage().getText() + "\n\n*Вы точно уверены в введенных данных?*\n`Данные повторно нельзя изменить`",
                                     Inline.getResizableKeyboard(
                                             List.of(
                                                     new Inline.Button("Все правильно", CallbackBundle.fromData(List.of("yes"))),
                                                     new Inline.Button("Есть ошибки", CallbackBundle.fromData(List.of("no")))
                                             ), 2));
                         })
-//                        .execute((s, u) -> {
-//                            if (!u.hasCallbackQuery()) {
-//                                s.rollback();
-//                                return;
-//                            }
-//
-//                            if (CallbackBundle.fromCallback(u.getText()).data().getFirst().equals("no")) {
-//                                s.send("*Регистрация отменена!*", Reply.getResizableKeyboard(List.of(new Reply.Button("Зарегистрироваться")), 1));
-//                                StepSessionManager.removeSession(u.getChatId());
-//                                return;
-//                            }
-//
-//                            s.append("\n*Точно уверенны?*",
-//                                    Inline.getResizableKeyboard(
-//                                            List.of(
-//                                                    new Inline.Button("Точно все правильно", CallbackBundle.fromData(List.of("yes"))),
-//                                                    new Inline.Button("Я ошибся!", CallbackBundle.fromData(List.of("no")))
-//                                            ), 2));
-//                        })
                         .execute((s, u) -> {
                             if (!u.hasCallbackQuery()) {
                                 s.rollback();
@@ -132,14 +113,14 @@ public class Register extends Command {
                             String name = (String) s.getStorage().get("name");
                             String isuId = (String) s.getStorage().get("isuId");
 
-                            Person person = studentService.save(Person.builder()
+                            Person person = personService.save(Person.builder()
                                     .role(role)
                                     .name(name)
                                     .isuId(Long.valueOf(isuId))
                                     .telegramUser(u.getTelegramUser())
                                     .build());
 
-                            s.send("Данные сохранены!");
+                            s.send("*Ваши данные сохранены.*\n/me - посмотреть профиль");
                         })
                 , update);
     }

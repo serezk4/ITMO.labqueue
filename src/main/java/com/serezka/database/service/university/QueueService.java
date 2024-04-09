@@ -35,8 +35,8 @@ public class QueueService {
         queueRepository.deleteById(id);
     }
 
-    @Transactional
-    public Optional<Queue> findByPractice(Practice practice) {
-        return queueRepository.findByPractice(practice);
-    }
+//    @Transactional
+//    public Optional<Queue> findByPractice(Practice practice) {
+//        return queueRepository.findByPractice(practice);
+//    }
 }

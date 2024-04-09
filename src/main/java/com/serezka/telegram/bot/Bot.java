@@ -131,6 +131,11 @@ public class Bot extends TelegramLongPollingBot {
         menuSession.init(this, chatId);
     }
 
+    public void createStepSession(StepSessionConfiguration configuration, long chatId) {
+        StepSession created = new StepSession(configuration, this, chatId);
+        StepSessionManager.addSession(chatId, created);
+    }
+
     public void createStepSession(StepSessionConfiguration configuration, Update update) {
         StepSession created = new StepSession(configuration, this, update.getChatId());
         StepSessionManager.addSession(update.getChatId(), created);

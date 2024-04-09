@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface QueueRepository extends JpaRepository<Queue, Long> {
-    Optional<Queue> findByPractice(Practice practice);
+//    Optional<Queue> findByPractice(Practice practice);
 }

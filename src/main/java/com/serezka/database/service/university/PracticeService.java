@@ -2,6 +2,7 @@ package com.serezka.database.service.university;
 
 import com.serezka.database.model.university.Person;
 import com.serezka.database.model.university.Practice;
+import com.serezka.database.model.university.Queue;
 import com.serezka.database.repository.university.PracticeRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -42,5 +43,15 @@ public class PracticeService {
     @Transactional
     public List<Practice> findAllByTeacher(Person teacher) {
         return practiceRepository.findAllByTeachersContaining(teacher);
+    }
+
+    @Transactional
+    public List<Practice> findPracticesByTimeFrom(ZonedDateTime startTime) {
+        return practiceRepository.findPracticesByTimeFrom(startTime);
+    }
+
+    @Transactional
+    public List<Practice> findPracticesByTimeFromAndQueueState(ZonedDateTime startTime, Queue.State state) {
+        return practiceRepository.findPracticesByTimeFromAndQueueState(startTime, state);
     }
 }

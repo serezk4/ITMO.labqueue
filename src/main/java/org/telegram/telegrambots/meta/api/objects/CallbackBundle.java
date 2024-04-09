@@ -31,6 +31,10 @@ public class CallbackBundle {
         return new CallbackBundle(Collections.emptyList(), Collections.emptyList());
     }
 
+    public static CallbackBundle fromData(String... data) {
+        return fromData(Arrays.asList(data));
+    }
+
     public static CallbackBundle fromData(List<String> data) {
         return new CallbackBundle(Collections.emptyList(), data);
     }

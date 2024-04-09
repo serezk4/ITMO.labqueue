@@ -5,7 +5,7 @@ import com.serezka.database.model.telegram.TelegramUser;
 import com.serezka.database.model.university.Flow;
 import com.serezka.database.service.telegram.TelegramFileService;
 import com.serezka.database.service.university.FlowService;
-import com.serezka.database.service.university.StudentService;
+import com.serezka.database.service.university.PersonService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.Command;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
@@ -28,14 +28,14 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UploadFile extends Command {
     TelegramFileService telegramFileService;
-    StudentService studentService;
+    PersonService personService;
     FlowService flowService;
 
-    public UploadFile(TelegramFileService telegramFileService, StudentService studentService, FlowService flowService) {
+    public UploadFile(TelegramFileService telegramFileService, PersonService personService, FlowService flowService) {
         super(List.of("/upload"), "загрузить файл в бота", TelegramUser.Role.MIN);
 
         this.telegramFileService = telegramFileService;
-        this.studentService = studentService;
+        this.personService = personService;
         this.flowService = flowService;
     }
 
@@ -44,7 +44,7 @@ public class UploadFile extends Command {
         bot.createStepSession(
                 StepSessionConfiguration.create()
                         .execute((s, u) -> s.send("*Выберите поток*:",
-                                Inline.getResizableKeyboard(flowService.findAllByStudentsContaining(studentService.findByTelegramUser(u.getTelegramUser()).orElseThrow(() -> new RuntimeException("Student not found")))
+                                Inline.getResizableKeyboard(flowService.findAllByStudentsContaining(personService.findByTelegramUser(u.getTelegramUser()).orElseThrow(() -> new RuntimeException("Student not found")))
                                         .stream()
                                         .map(flow -> new Inline.Button(flow.getName(), CallbackBundle.fromData(List.of(flow.getId().toString()))))
                                         .toList(), 2)))
@@ -78,7 +78,7 @@ public class UploadFile extends Command {
                                         .name(downloaded.getName())
                                         .content(Files.readAllBytes(downloaded.toPath()))
                                         .flow(selectedFlow.get())
-                                        .person(studentService.findByTelegramUser(u.getTelegramUser()).orElseThrow(() -> new RuntimeException("Student not found")))
+                                        .person(personService.findByTelegramUser(u.getTelegramUser()).orElseThrow(() -> new RuntimeException("Student not found")))
                                         .build());
 
                                 s.send("\n*Файл успешно загружен!*\n*Файл:* `" + telegramFile.getId() + telegramFile.getName() + "`\n*Поток:* " + selectedFlow.get().getName() + "\n\n/myfiles - все ваши файлы");

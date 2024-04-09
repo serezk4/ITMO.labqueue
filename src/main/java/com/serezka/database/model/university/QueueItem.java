@@ -27,6 +27,12 @@ public class QueueItem {
     @Column(name = "number_of_approaches", nullable = false)
     long numberOfApproaches = 0;
 
+    @Column(nullable = false)
+    double position;
+
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    Queue queue;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

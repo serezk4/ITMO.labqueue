@@ -9,11 +9,13 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
-@Entity @Table(name = "practices")
- @AllArgsConstructor
+@Entity
+@Table(name = "practices")
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 @RequiredArgsConstructor
 public class Practice {
@@ -27,7 +29,14 @@ public class Practice {
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     List<Person> teachers;
 
-    @Basic ZonedDateTime begin;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Builder.Default
+    Queue queue = Queue.builder()
+            .state(Queue.State.WAITING)
+            .build();
+
+    @Basic
+    ZonedDateTime begin;
 
     @Override
     public final boolean equals(Object o) {

@@ -2,7 +2,7 @@ package com.serezka.database.service.university;
 
 import com.serezka.database.model.telegram.TelegramUser;
 import com.serezka.database.model.university.Person;
-import com.serezka.database.repository.university.StudentRepository;
+import com.serezka.database.repository.university.PersonRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,41 +15,41 @@ import java.util.Optional;
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class StudentService {
-    StudentRepository studentRepository;
+public class PersonService {
+    PersonRepository personRepository;
 
     @Transactional
     public Person save(Person person) {
-        return studentRepository.save(person);
+        return personRepository.save(person);
     }
 
     @Transactional
     public void removeById(Long id) {
-        studentRepository.deleteById(id);
+        personRepository.deleteById(id);
     }
 
     @Transactional
     public Optional<Person> findById(Long id) {
-        return studentRepository.findById(id);
+        return personRepository.findById(id);
     }
 
     @Transactional
     public Optional<Person> findByTelegramUser(TelegramUser telegramUser) {
-        return studentRepository.findByTelegramUser(telegramUser);
+        return personRepository.findByTelegramUser(telegramUser);
     }
 
     @Transactional
     public List<Person> findAllByName(String name) {
-        return studentRepository.findAllByName(name);
+        return personRepository.findAllByName(name);
     }
 
     @Transactional
     public Optional<Person> findByIsuId(Long isuId) {
-        return studentRepository.findByIsuId(isuId);
+        return personRepository.findByIsuId(isuId);
     }
 
     @Transactional
     public boolean existsByTelegramUser(TelegramUser telegramUser) {
-        return studentRepository.existsByTelegramUser(telegramUser);
+        return personRepository.existsByTelegramUser(telegramUser);
     }
 }

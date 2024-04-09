@@ -1,5 +1,6 @@
 package com.serezka.database.service.university;
 
+import com.serezka.database.model.university.Person;
 import com.serezka.database.model.university.Queue;
 import com.serezka.database.model.university.QueueItem;
 import com.serezka.database.repository.university.QueueItemRepository;
@@ -31,5 +32,10 @@ public class QueueItemService {
     @Transactional
     public void removeById(Long id) {
         queueItemRepository.deleteById(id);
+    }
+
+    @Transactional
+    public boolean existsByPersonAndQueue(Person person, Queue queue) {
+        return queueItemRepository.existsByPersonAndQueue(person, queue);
     }
 }

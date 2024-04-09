@@ -3,12 +3,11 @@ package com.serezka.telegram.command.list;
 import com.serezka.database.model.university.Flow;
 import com.serezka.database.model.university.Person;
 import com.serezka.database.service.university.FlowService;
-import com.serezka.database.service.university.StudentService;
+import com.serezka.database.service.university.PersonService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.SystemCommand;
 import com.serezka.telegram.session.step.StepSessionConfiguration;
 import com.serezka.telegram.util.keyboard.type.Inline;
-import com.serezka.telegram.util.keyboard.type.Reply;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
@@ -22,13 +21,13 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AddFlow extends SystemCommand {
     FlowService flowService;
-    StudentService studentService;
+    PersonService personService;
 
-    public AddFlow(FlowService flowService, StudentService studentService) {
+    public AddFlow(FlowService flowService, PersonService personService) {
         super(List.of("/addflow", "Добавить поток"), "добавить поток");
 
         this.flowService = flowService;
-        this.studentService = studentService;
+        this.personService = personService;
     }
 
     @Override
@@ -74,7 +73,7 @@ public class AddFlow extends SystemCommand {
                     String flowName = (String) s.getStorage().get("flowName");
                     String secretKey = u.getText();
 
-                    Optional<Person> student = studentService.findByTelegramUser(u.getTelegramUser());
+                    Optional<Person> student = personService.findByTelegramUser(u.getTelegramUser());
 
                     if (student.isEmpty()) {
                         s.send("*Кажется, вы еще не зарегистрировались в боте.*\n/register - для регистрации\n`Если вы регистрировались, то напишите @serezkk`");

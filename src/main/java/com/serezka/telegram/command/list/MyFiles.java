@@ -4,7 +4,7 @@ import com.serezka.database.model.telegram.TelegramFile;
 import com.serezka.database.model.telegram.TelegramUser;
 import com.serezka.database.model.university.Person;
 import com.serezka.database.service.telegram.TelegramFileService;
-import com.serezka.database.service.university.StudentService;
+import com.serezka.database.service.university.PersonService;
 import com.serezka.telegram.bot.Bot;
 import com.serezka.telegram.command.Command;
 import lombok.AccessLevel;
@@ -30,19 +30,19 @@ import java.util.Optional;
 @Log4j2
 public class MyFiles extends Command {
     TelegramFileService telegramFileService;
-    StudentService studentService;
+    PersonService personService;
 
-    public MyFiles(TelegramFileService telegramFileService, StudentService studentService) {
+    public MyFiles(TelegramFileService telegramFileService, PersonService personService) {
         super(List.of("/myfiles"), "Посмотреть загруженные файлы", TelegramUser.Role.MIN);
 
         this.telegramFileService = telegramFileService;
-        this.studentService = studentService;
+        this.personService = personService;
     }
 
 
     @Override
     public void execute(Bot bot, Update update) {
-        Optional<Person> optionalStudent = studentService.findByTelegramUser(update.getTelegramUser());
+        Optional<Person> optionalStudent = personService.findByTelegramUser(update.getTelegramUser());
         if (optionalStudent.isEmpty()) {
             bot.send(SendMessage.builder()
                     .text("Вы не зарегистрированы в системе")

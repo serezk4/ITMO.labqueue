@@ -6,8 +6,10 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
-@Entity @Table(name = "queue")
-@NoArgsConstructor @AllArgsConstructor
+@Entity
+@Table(name = "queue")
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @Data
@@ -16,21 +18,13 @@ public class Queue {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinColumn(name = "practice_id", referencedColumnName = "id", unique = true)
-    Practice practice;
-
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "queue_id", referencedColumnName = "id")
     List<QueueItem> items;
 
     @Builder.Default
+    @Enumerated(value = EnumType.STRING)
     State state = State.WAITING;
-
-    public Queue(Practice practice, List<QueueItem> items) {
-        this.practice = practice;
-        this.items = items;
-    }
 
     public enum State {
         WAITING,
