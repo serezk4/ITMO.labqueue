@@ -18,7 +18,11 @@ import org.telegram.telegrambots.meta.api.objects.CallbackBundle;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -66,7 +70,7 @@ public class PracticeUpdater extends Updater {
     }
 
     private void closeRegistrationAndGenerateQueue(Practice practice) {
-        log.info("closing registration for {}", practice.toString());
+//        log.info("closing registration for {}", practice.toString());
 
         // get params
         final Flow flow = practice.getFlow();
@@ -74,7 +78,7 @@ public class PracticeUpdater extends Updater {
         queueService.save(practice.getQueue());
 
         // get students
-        List<Person> students = personService.findAllByName(flow.getName());
+        List<Person> students = practice.getFlow().getPeople();
 
         students.forEach(student -> {
             TelegramUser telegramUser = student.getTelegramUser();
@@ -86,24 +90,39 @@ public class PracticeUpdater extends Updater {
 
             long chatId = telegramUser.getChatId();
 
-            bot.execute(SendMessage.builder()
-                    .text(String.format("<b>Закрыта запись на практику:</b> \n<b>Поток:</b> %s\n<b>Начало:</b> %tT\n<b>Преподаватели:</b> %s",
-                            flow.getName(), practice.getBegin(), practice.getTeachers()))
-                    .chatId(chatId)
-                    .parseMode(ParseMode.HTML).build());
-
             double position = bot.execute(SendDice.builder()
                     .chatId(telegramUser.getChatId())
                     .build()).getDice().getValue() + (Math.random() * (Math.random() + 1));
 
-            QueueItem queueItem = queueItemService.save(QueueItem.builder()
-                    .person(student)
-                    .position(position)
-                    .build());
-
             bot.execute(SendMessage.builder()
-                    .text(String.format("*Вам выпало:* %.2f", position))
-                    .chatId(chatId).build());
+                    .text(String.format("<b>Закрыта запись на практику:</b> \n<b>Поток:</b> %s\n<b>Начало:</b> %tT\n<b>Преподаватели:</b> %s\n\n<b>Вам выпало:</b> %.2f",
+                            flow.getName(), practice.getBegin(), practice.getTeachers(), position))
+                    .chatId(chatId)
+                    .parseMode(ParseMode.HTML).build());
+
+            QueueItem queueItem = queueItemService.findByPersonAndQueue(student, practice.getQueue())
+                    .orElseGet(() -> queueItemService.save(QueueItem.builder()
+                            .person(student)
+                            .position(4 * 1000)
+                            .queue(practice.getQueue())
+                            .build()));
+
+            queueItem.setPosition(queueItem.getPosition() + position);
+            queueItemService.save(queueItem);
+        });
+
+
+        Set<QueueItem> queueItems = new TreeSet<>();
+        students.forEach(student -> {
+            TelegramUser telegramUser = student.getTelegramUser();
+
+            if (telegramUser == null) {
+                log.warn("student {} has no telegram user", student.getName());
+                return;
+            }
+
+//            queueItemService.findByPersonAndQueue(student, practice.getQueue()).ifPresent(queueItems::add);
+            // todo fix this
         });
 
     }
@@ -113,9 +132,6 @@ public class PracticeUpdater extends Updater {
 
         // get params
         final Flow flow = practice.getFlow();
-
-        // check optionalQueue
-        Queue optionalQueue = practice.getQueue();
 
         // send info to students
         flow.getPeople().forEach(student -> {
@@ -176,21 +192,6 @@ public class PracticeUpdater extends Updater {
                                 s.append(" [" + callbackBundle.data().getFirst() + "]\n*Ожидайте формирования очереди.*");
                             }),
                     telegramUser.getChatId());
-
-/*            double position = bot.execute(SendDice.builder()
-                    .chatId(telegramUser.getChatId())
-                    .build()).getDice().getValue() + (Math.random() * (Math.random() + 1));
-
-            QueueItem queueItem = queueItemService.save(QueueItem.builder()
-                    .person(student)
-                    .position(position)
-                    .build());
-
-            bot.execute(SendMessage.builder()
-                    .text(String.format("*Вам выпало:* %.2f", position))
-                    .chatId(chatId).build());*/
-
-
         });
     }
 }

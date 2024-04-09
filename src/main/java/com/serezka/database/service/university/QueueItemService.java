@@ -38,4 +38,11 @@ public class QueueItemService {
     public boolean existsByPersonAndQueue(Person person, Queue queue) {
         return queueItemRepository.existsByPersonAndQueue(person, queue);
     }
+
+    @Transactional
+    public Optional<QueueItem> findByPersonAndQueue(Person person, Queue queue) {
+        return queueItemRepository.findByPersonAndQueue(person, queue);
+    }
+
+
 }

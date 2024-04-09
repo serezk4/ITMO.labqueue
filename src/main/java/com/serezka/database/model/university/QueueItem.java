@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.proxy.HibernateProxy;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 @Getter @Setter
 @ToString
 @RequiredArgsConstructor
-public class QueueItem {
+public class QueueItem implements Comparable<QueueItem> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -47,5 +48,10 @@ public class QueueItem {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+
+    @Override
+    public int compareTo(@NotNull QueueItem o) {
+        return Double.compare(position, o.position);
     }
 }
