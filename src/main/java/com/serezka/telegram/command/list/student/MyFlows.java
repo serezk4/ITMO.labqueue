@@ -1,4 +1,4 @@
-package com.serezka.telegram.command.list;
+package com.serezka.telegram.command.list.student;
 
 import com.serezka.database.model.telegram.TelegramUser;
 import com.serezka.database.model.university.Flow;
@@ -41,7 +41,7 @@ public class MyFlows extends Command {
             return;
         }
 
-        List<Flow> flows = flowService.findAllByStudentsContaining(personService.findByTelegramUser(update.getTelegramUser()).get());
+        List<Flow> flows = flowService.findAllByPeopleContaining(personService.findByTelegramUser(update.getTelegramUser()).get());
 
         Map<String, PageGenerator> flowsPage = new HashMap<>();
         flows.forEach(flow -> {

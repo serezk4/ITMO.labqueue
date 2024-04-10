@@ -1,4 +1,4 @@
-package com.serezka.telegram.command.list;
+package com.serezka.telegram.command.list.student;
 
 import com.serezka.database.model.telegram.TelegramUser;
 import com.serezka.database.model.university.Person;

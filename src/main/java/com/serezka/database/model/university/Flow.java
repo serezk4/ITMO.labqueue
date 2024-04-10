@@ -25,7 +25,7 @@ public class Flow {
 
     String secret;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     List<Person> people;
 
     @Override

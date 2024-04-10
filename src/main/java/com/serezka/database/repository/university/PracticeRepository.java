@@ -1,5 +1,6 @@
 package com.serezka.database.repository.university;
 
+import com.serezka.database.model.university.Flow;
 import com.serezka.database.model.university.Person;
 import com.serezka.database.model.university.Practice;
 import com.serezka.database.model.university.Queue;
@@ -25,4 +26,6 @@ public interface PracticeRepository extends JpaRepository<Practice, Long> {
                                                         @Param("state") Queue.State state);
 
     List<Practice> findAllByTeachersContaining(Person teacher);
+
+    List<Practice> findAllByFlow(Flow flow);
 }

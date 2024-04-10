@@ -80,6 +80,7 @@ public class PracticeUpdater extends Updater {
         // get students
         List<Person> students = practice.getFlow().getPeople();
 
+        Set<QueueItem> queueItems = new TreeSet<>();
         students.forEach(student -> {
             TelegramUser telegramUser = student.getTelegramUser();
 
@@ -108,11 +109,16 @@ public class PracticeUpdater extends Updater {
                             .build()));
 
             queueItem.setPosition(queueItem.getPosition() + position);
-            queueItemService.save(queueItem);
+            queueItems.add(queueItemService.save(queueItem));
         });
 
+        StringBuilder queueText = new StringBuilder("*Очередь на практику потока " + practice.getFlow().getName() + "\nОт " + practice.getBegin() + "*\n\n");
 
-        Set<QueueItem> queueItems = new TreeSet<>();
+        int i = 0;
+        for (QueueItem queueItem : queueItems) {
+            queueText.append(++i).append(". ").append(queueItem.getPerson().getName()).append(" - ").append(queueItem.getPosition()).append("\n");
+        }
+
         students.forEach(student -> {
             TelegramUser telegramUser = student.getTelegramUser();
 
@@ -121,8 +127,10 @@ public class PracticeUpdater extends Updater {
                 return;
             }
 
-//            queueItemService.findByPersonAndQueue(student, practice.getQueue()).ifPresent(queueItems::add);
-            // todo fix this
+            long chatId = telegramUser.getChatId();
+            bot.execute(SendMessage.builder()
+                    .text(queueText.toString())
+                    .chatId(chatId).build());
         });
 
     }
@@ -132,6 +140,9 @@ public class PracticeUpdater extends Updater {
 
         // get params
         final Flow flow = practice.getFlow();
+
+        practice.getQueue().setState(Queue.State.REGISTRATION_OPEN);
+        queueService.save(practice.getQueue());
 
         // send info to students
         flow.getPeople().forEach(student -> {

@@ -22,8 +22,9 @@ public class MenuSession implements Session {
     private final long id = idCounter++;
 
     private final long chatId;
-    private PageGenerator root;
-    private Map<String, PageGenerator> pages;
+    private final PageGenerator root;
+    private PageGenerator currentPage = null;
+    private final Map<String, PageGenerator> pages;
     private final List<CallbackBundle> callbackHistory = new ArrayList<>();
 
     public MenuSession(long chatId, PageGenerator root, Map<String, PageGenerator> pages) {
@@ -39,6 +40,8 @@ public class MenuSession implements Session {
         Page page = root.apply(this, CallbackBundle.empty());
         page.getButtons().forEach(button -> button.getCallbackBundle().link().addFirst(String.valueOf(id)));
 
+        currentPage = root;
+
         bot.execute(SendMessage.builder()
                 .chatId(chatId)
                 .text(page.getText())
@@ -50,6 +53,7 @@ public class MenuSession implements Session {
         if (!update.hasCallbackQuery()) return;
 
         CallbackBundle callbackBundle = CallbackBundle.fromCallback(update.getCallbackQuery().getData());
+        callbackBundle.setUpdate(update);
         callbackHistory.add(callbackBundle);
         if (callbackBundle.link().size() < 2) return;
         if (callbackBundle.link().getLast().equals("close")) {
@@ -63,10 +67,13 @@ public class MenuSession implements Session {
 
         PageGenerator pageGenerator = pages.getOrDefault(callbackBundle.link().getLast(), null);
         if (callbackBundle.link().getLast().equals("root")) pageGenerator = root;
+        if (callbackBundle.link().getLast().equals("this") && currentPage != null) pageGenerator = currentPage;
         if (pageGenerator == null) {
             log.warn("Page with name {} not found", callbackBundle.link().getLast());
             return;
         }
+
+        currentPage = pageGenerator;
 
         Page page = pageGenerator.apply(this, callbackBundle);
         page.getButtons().forEach(button -> button.getCallbackBundle().link().addFirst(String.valueOf(id)));

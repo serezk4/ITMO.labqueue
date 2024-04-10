@@ -1,5 +1,7 @@
 package org.telegram.telegrambots.meta.api.objects;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
@@ -13,6 +15,7 @@ import java.util.List;
 public class CallbackBundle {
     private final List<String> link;
     private final List<String> data;
+    @Getter @Setter private Update update;
 
     public CallbackBundle(List<String> link, List<String> data) {
         this.link = new ArrayList<>(link);

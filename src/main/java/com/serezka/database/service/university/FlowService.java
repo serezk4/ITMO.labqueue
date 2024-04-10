@@ -49,7 +49,7 @@ public class FlowService {
     }
 
     @Transactional
-    public List<Flow> findAllByStudentsContaining(Person person) {
+    public List<Flow> findAllByPeopleContaining(Person person) {
         return flowRepository.findAllByPeopleContaining(person);
     }
 }

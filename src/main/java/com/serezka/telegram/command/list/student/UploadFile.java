@@ -1,4 +1,4 @@
-package com.serezka.telegram.command.list;
+package com.serezka.telegram.command.list.student;
 
 import com.serezka.database.model.telegram.TelegramFile;
 import com.serezka.database.model.telegram.TelegramUser;
@@ -44,7 +44,7 @@ public class UploadFile extends Command {
         bot.createStepSession(
                 StepSessionConfiguration.create()
                         .execute((s, u) -> s.send("*Выберите поток*:",
-                                Inline.getResizableKeyboard(flowService.findAllByStudentsContaining(personService.findByTelegramUser(u.getTelegramUser()).orElseThrow(() -> new RuntimeException("Student not found")))
+                                Inline.getResizableKeyboard(flowService.findAllByPeopleContaining(personService.findByTelegramUser(u.getTelegramUser()).orElseThrow(() -> new RuntimeException("Student not found")))
                                         .stream()
                                         .map(flow -> new Inline.Button(flow.getName(), CallbackBundle.fromData(List.of(flow.getId().toString()))))
                                         .toList(), 2)))

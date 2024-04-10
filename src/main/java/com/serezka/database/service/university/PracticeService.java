@@ -1,5 +1,6 @@
 package com.serezka.database.service.university;
 
+import com.serezka.database.model.university.Flow;
 import com.serezka.database.model.university.Person;
 import com.serezka.database.model.university.Practice;
 import com.serezka.database.model.university.Queue;
@@ -53,5 +54,10 @@ public class PracticeService {
     @Transactional
     public List<Practice> findPracticesByTimeFromAndQueueState(ZonedDateTime startTime, Queue.State state) {
         return practiceRepository.findPracticesByTimeFromAndQueueState(startTime, state);
+    }
+
+    @Transactional
+    public List<Practice> findAllByFlow(Flow flow) {
+        return practiceRepository.findAllByFlow(flow);
     }
 }
